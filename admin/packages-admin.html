@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Packages Manager – J&amp;P Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="dashboard.html">
+        <img src="../images/Banquet_logo.png" alt="J&P Logo" onerror="this.style.display='none'">
+        <div class="brand">J&amp;P Banquet<span>Admin Panel</span></div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Main</div>
+        <a href="dashboard.html" class="sidebar-link"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Content</div>
+        <a href="gallery-admin.html" class="sidebar-link"><i class="fa-solid fa-images"></i> Gallery</a>
+        <a href="packages-admin.html" class="sidebar-link active"><i class="fa-solid fa-layer-group"></i> Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Site</div>
+        <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="top-bar">
+      <div>
+        <div class="page-title">Packages</div>
+        <div class="breadcrumb"><span>Admin</span> / Packages</div>
+      </div>
+      <button class="topbar-hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <div class="admin-content">
+      <div class="panel-header">
+        <h2><i class="fa-solid fa-layer-group" style="color:var(--accent);margin-right:8px;"></i> Event Packages</h2>
+        <button class="btn btn-accent" id="btn-add-pkg">
+          <i class="fa-solid fa-plus"></i> Add Package
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="pkg-table">
+          <thead>
+            <tr>
+              <th>Icon</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Description</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="pkg-tbody">
+            <tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="pkg-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-title"><i class="fa-solid fa-layer-group"></i> <span id="modal-pkg-title">Add Package</span></div>
+
+    <form id="pkg-form" novalidate>
+      <input type="hidden" id="p-row-id">
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="p-name">Package Name *</label>
+          <input type="text" id="p-name" placeholder="e.g. Anand (Standard)" required>
+        </div>
+        <div class="form-group">
+          <label for="p-price">Price (₹) *</label>
+          <input type="text" id="p-price" placeholder="e.g. 1,10,000" required>
+        </div>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="p-icon">Font Awesome Icon Class</label>
+          <input type="text" id="p-icon" placeholder="e.g. fa-solid fa-crown">
+          <small>Any Font Awesome icon class. Preview: <span id="icon-preview">–</span></small>
+        </div>
+        <div class="form-group">
+          <label for="p-status">Status</label>
+          <select id="p-status">
+            <option value="active">Active</option>
+            <option value="featured">Featured (Most Popular)</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="p-per">Per (suffix)</label>
+        <input type="text" id="p-per" placeholder="/ event" value="/ event">
+      </div>
+
+      <div class="form-group">
+        <label for="p-description">Short Description *</label>
+        <textarea id="p-description" placeholder="Brief summary of what this package offers…" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="p-inclusions">Inclusions (one per line)</label>
+        <textarea id="p-inclusions" style="min-height:120px;" placeholder="Hall rental (up to 800 guests)&#10;Multi-cuisine catering (veg)&#10;Professional sound &amp; LED lighting"></textarea>
+        <small>Each line = one bullet point on the website.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="p-exclusions">Exclusions (one per line)</label>
+        <textarea id="p-exclusions" placeholder="Premium décor &amp; draping&#10;Photographer"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" id="cancel-pkg">Cancel</button>
+        <button type="submit" class="btn btn-accent" id="save-pkg-btn">
+          <i class="fa-solid fa-floppy-disk"></i> Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/admin.js"></script>
+<script>
+  requireAuth();
+
+  let pkgData = [];
+  let editingId = null;
+
+  // Icon preview
+  document.getElementById('p-icon').addEventListener('input', function() {
+    const ic = this.value.trim();
+    document.getElementById('icon-preview').innerHTML = ic ? `<i class="${ic}" style="color:var(--accent);"></i>` : '–';
+  });
+
+  async function loadPackages() {
+    const tbody = document.getElementById('pkg-tbody');
+    try {
+      pkgData = await apiFetch('/api/packages');
+      if (!pkgData.length) {
+        tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-layer-group"></i><p>No packages yet.</p></div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = pkgData.map(item => `
+        <tr data-id="${item.id}">
+          <td style="font-size:1.4rem; color:var(--accent);">
+            <i class="${item.icon || 'fa-solid fa-star'}"></i>
+          </td>
+          <td><strong>${item.name}</strong></td>
+          <td style="color:var(--accent-light); font-weight:600;">₹${item.price}</td>
+          <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.description || '–'}</td>
+          <td>
+            ${item.status === 'featured'
+              ? '<span class="badge badge-featured">Featured</span>'
+              : item.status === 'hidden'
+              ? '<span style="color:var(--text-muted);font-size:0.8rem;">Hidden</span>'
+              : '<span class="badge badge-active">Active</span>'}
+          </td>
+          <td>
+            <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="openEditPkg('${item.id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deletePkg('${item.id}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Failed to load. Check backend.</p></div></td></tr>`;
+    }
+  }
+
+  function openAddPkg() {
+    editingId = null;
+    document.getElementById('modal-pkg-title').textContent = 'Add Package';
+    document.getElementById('pkg-form').reset();
+    document.getElementById('p-row-id').value = '';
+    document.getElementById('p-per').value = '/ event';
+    document.getElementById('icon-preview').innerHTML = '–';
+    document.getElementById('pkg-modal').classList.add('open');
+  }
+
+  function openEditPkg(id) {
+    editingId = id;
+    const item = pkgData.find(p => p.id === id);
+    if (!item) return;
+    document.getElementById('modal-pkg-title').textContent = 'Edit Package';
+    document.getElementById('p-row-id').value = item.id;
+    document.getElementById('p-name').value = item.name || '';
+    document.getElementById('p-price').value = item.price || '';
+    document.getElementById('p-icon').value = item.icon || '';
+    document.getElementById('p-per').value = item.per || '/ event';
+    document.getElementById('p-status').value = item.status || 'active';
+    document.getElementById('p-description').value = item.description || '';
+    document.getElementById('p-inclusions').value = (item.inclusions || []).join('\n');
+    document.getElementById('p-exclusions').value = (item.exclusions || []).join('\n');
+    const ic = item.icon || '';
+    document.getElementById('icon-preview').innerHTML = ic ? `<i class="${ic}" style="color:var(--accent);"></i>` : '–';
+    document.getElementById('pkg-modal').classList.add('open');
+  }
+
+  function closePkgModal() {
+    document.getElementById('pkg-modal').classList.remove('open');
+  }
+
+  async function deletePkg(id) {
+    if (!confirm('Delete this package? This cannot be undone.')) return;
+    try {
+      await apiFetch(`/api/packages/${id}`, 'DELETE');
+      showToast('Package deleted.', 'success');
+      loadPackages();
+    } catch(e) {
+      showToast('Failed to delete.', 'error');
+    }
+  }
+
+  document.getElementById('pkg-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('save-pkg-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+    const inclusionsText = document.getElementById('p-inclusions').value;
+    const exclusionsText = document.getElementById('p-exclusions').value;
+
+    const payload = {
+      name: document.getElementById('p-name').value.trim(),
+      price: document.getElementById('p-price').value.trim(),
+      icon: document.getElementById('p-icon').value.trim(),
+      per: document.getElementById('p-per').value.trim(),
+      status: document.getElementById('p-status').value,
+      description: document.getElementById('p-description').value.trim(),
+      inclusions: inclusionsText.split('\n').map(l => l.trim()).filter(Boolean),
+      exclusions: exclusionsText.split('\n').map(l => l.trim()).filter(Boolean),
+    };
+
+    try {
+      if (editingId) {
+        payload.id = editingId;
+        await apiFetch(`/api/packages/${editingId}`, 'PUT', payload);
+        showToast('Package updated!', 'success');
+      } else {
+        await apiFetch('/api/packages', 'POST', payload);
+        showToast('Package added!', 'success');
+      }
+      closePkgModal();
+      loadPackages();
+    } catch(e) {
+      showToast(e.message || 'Failed to save. Try again.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+    }
+  });
+
+  document.getElementById('btn-add-pkg').addEventListener('click', openAddPkg);
+  document.getElementById('modal-close').addEventListener('click', closePkgModal);
+  document.getElementById('cancel-pkg').addEventListener('click', closePkgModal);
+  document.getElementById('pkg-modal').addEventListener('click', function(e) {
+    if (e.target === this) closePkgModal();
+  });
+
+  loadPackages();
+</script>
+</body>
+</html>

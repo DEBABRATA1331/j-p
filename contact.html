@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact &amp; Book – J&amp;P Banquet</title>
+    <meta name="description"
+        content="Get in touch with J&amp;P Banquet Hall. Book your event, ask questions, or visit us. Weddings, receptions, corporate events in Mumbai.">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <style>
+        .map-placeholder {
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, var(--green-dark), #1D3D2D);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 0.9rem;
+            gap: 10px;
+            border: 1px solid rgba(200, 151, 58, 0.15);
+        }
+
+        .map-placeholder i {
+            font-size: 2.4rem;
+            color: var(--gold);
+        }
+
+        .google-rating-banner {
+            background: linear-gradient(135deg, var(--green-dark), #1D3D2D);
+            border: 1px solid rgba(200, 151, 58, 0.2);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+            margin-top: 1.8rem;
+        }
+
+        .stars {
+            color: #FBB914;
+            font-size: 1.4rem;
+            letter-spacing: 3px;
+        }
+
+        .rating-num {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.4rem;
+            color: var(--gold-light);
+            font-weight: 700;
+        }
+
+        .rating-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.82rem;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar" id="navbar">
+            <a href="index.html" class="nav-logo">
+                <img src="images/Banquet_logo.png" alt="J&amp;P Logo">
+                J&amp;P Banquet
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="packages.html">Packages</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="blog.html">Blog</a></li>
+                <li><a href="contact.html" class="active">Contact & FAQ</a></li>
+                <li><a href="contact.html" class="btn btn-primary" style="padding:0.55rem 1.4rem;">Book Now</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="packages.html">Packages</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Blog</a>
+            <a href="contact.html">Contact & FAQ</a>
+            <a href="contact.html" class="btn btn-primary" style="margin-top:0.5rem;justify-content:center;">Book
+                Now</a>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="decor-ring ring-1"></div>
+        <div class="decor-ring ring-2"></div>
+        <h1>Contact <span>&amp; Book</span></h1>
+        <p>We'd love to hear about your event. Fill in the form and we'll get back to you within 24 hours.</p>
+    </section>
+
+    <!-- CONTACT & FORM -->
+    <section class="section section-light" id="inquiry">
+        <div class="contact-grid">
+
+            <!-- INQUIRY FORM -->
+            <div class="form-card reveal">
+                <div class="form-body" id="form-body">
+                    <h2 class="form-title">Send an <span style="color:var(--gold);">Inquiry</span></h2>
+                    <p class="form-subtitle">Fields marked <span style="color:var(--saffron);">*</span> are required. We
+                        respond within 24 hours.</p>
+
+                    <form id="inquiry-form" novalidate>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="name">Full Name <span class="required">*</span></label>
+                                <input type="text" id="name" name="name" placeholder="e.g. Ramesh Kumar"
+                                    autocomplete="name">
+                            </div>
+                            <div class="form-group">
+                                <label for="phone">Phone Number <span class="required">*</span></label>
+                                <input type="tel" id="phone" name="phone" placeholder="+91 98765 43210"
+                                    autocomplete="tel">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address <span class="required">*</span></label>
+                            <input type="email" id="email" name="email" placeholder="you@example.com"
+                                autocomplete="email">
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="event-type">Event Type <span class="required">*</span></label>
+                                <select id="event-type" name="event-type">
+                                    <option value="">Select event type…</option>
+                                    <option value="wedding">Weddings</option>
+                                    <option value="engagement">Engagement Parties</option>
+                                    <option value="birthday">Birthday Parties</option>
+                                    <option value="haldi">Haldi Ceremony</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="event-date">Preferred Date <span class="required">*</span></label>
+                                <input type="date" id="event-date" name="event-date">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="guests">Expected Guest Count <span class="required">*</span></label>
+                            <input type="number" id="guests" name="guests" placeholder="e.g. 500" min="1" max="2000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="package">Package Interest</label>
+                            <select id="package" name="package">
+                                <option value="">Not sure yet</option>
+                                <option value="basic">Saurabh – Basic (₹45,000)</option>
+                                <option value="standard">Anand – Standard (₹1,10,000)</option>
+                                <option value="premium">Maharaja – Premium (₹2,50,000)</option>
+                                <option value="custom">Custom / Need a Quote</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="message">Additional Message</label>
+                            <textarea id="message" name="message"
+                                placeholder="Tell us about your vision, special requests, or any questions you have…"></textarea>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary"
+                            style="width:100%;justify-content:center;padding:1rem;font-size:1rem;">
+                            <i class="fa-solid fa-paper-plane"></i> Send My Inquiry
+                        </button>
+                    </form>
+                </div>
+
+                <!-- SUCCESS STATE -->
+                <div class="form-success" id="form-success">
+                    <div class="success-icon"><i class="fa-solid fa-circle-check" style="color:var(--gold);"></i></div>
+                    <h3>Inquiry Received!</h3>
+                    <p>Thank you for reaching out to J&amp;P Banquet. Our team will contact you within <strong>24
+                            hours</strong> to discuss your event details.</p>
+                    <a href="packages.html" class="btn btn-green" style="margin-top:1.5rem;"><i
+                            class="fa-solid fa-layer-group"></i> Browse Packages</a>
+                </div>
+            </div>
+
+            <!-- CONTACT DETAILS -->
+            <div class="contact-details reveal reveal-delay-1">
+                <h3 class="section-title" style="font-size:1.5rem;">Get In <span>Touch</span></h3>
+                <div class="motif-divider" style="width:fit-content;margin:0 0 1.5rem;"><span>✿</span></div>
+
+                <div class="contact-info-list">
+                    <div class="ci-item">
+                        <div class="ci-icon"><i class="fa-solid fa-location-dot"></i></div>
+                        <div>
+                            <strong>Address</strong>
+                            <span>12, J&amp;P Commercial Complex,<br>Andheri West, Mumbai – 400053</span>
+                        </div>
+                    </div>
+                    <div class="ci-item">
+                        <div class="ci-icon"><i class="fa-solid fa-phone"></i></div>
+                        <div>
+                            <strong>Phone</strong>
+                            <span>+91 98194 86104<br>+91 96655 22814</span>
+                        </div>
+                    </div>
+                    <div class="ci-item">
+                        <div class="ci-icon"><i class="fa-solid fa-envelope"></i></div>
+                        <div>
+                            <strong>Email</strong>
+                            <span>info@jnpbanquet.in<br>bookings@jnpbanquet.in</span>
+                        </div>
+                    </div>
+                    <div class="ci-item">
+                        <div class="ci-icon"><i class="fa-solid fa-clock"></i></div>
+                        <div>
+                            <strong>Office Hours</strong>
+                            <span>Mon – Sat: 9:00 AM – 8:00 PM<br>Sunday: 10:00 AM – 6:00 PM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Placeholder -->
+                <div class="map-embed">
+                    <div class="map-placeholder">
+                        <i class="fa-solid fa-map-location-dot"></i>
+                        <div>12, J&amp;P Complex, Andheri West, Mumbai</div>
+                        <a href="https://maps.google.com" target="_blank" rel="noopener" class="btn btn-primary"
+                            style="font-size:0.82rem;padding:0.5rem 1.2rem;margin-top:0.25rem;">
+                            <i class="fa-solid fa-arrow-up-right-from-square"></i> Open in Google Maps
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Google Rating -->
+                <div class="google-rating-banner">
+                    <div class="stars">★★★★★</div>
+                    <div class="rating-num">4.9</div>
+                    <div class="rating-label">Based on 340+ Google Reviews</div>
+                    <a href="#" class="btn btn-outline"
+                        style="margin-top:0.8rem;font-size:0.8rem;padding:0.4rem 1.1rem;border-color:rgba(200,151,58,0.4);color:var(--gold-light);">
+                        <i class="fa-brands fa-google"></i> View All Reviews
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ SECTION -->
+    <section class="faq-section" id="faq">
+        <div class="text-center" style="margin-bottom:3rem;">
+            <span class="section-badge reveal">✦ Common Questions</span>
+            <h2 class="section-title reveal">Frequently Asked <span>Questions</span></h2>
+            <div class="motif-divider reveal"><span>✿</span></div>
+        </div>
+        <div class="faq-list reveal">
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What is the maximum seating capacity of J&amp;P Banquet?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    J&amp;P Banquet Hall can comfortably accommodate up to <strong>2,000 guests</strong> for large Format
+                    events. For cocktail-style or standing events, the hall can host up to 2,500 guests. For smaller,
+                    more intimate gatherings we also have a smaller hall for up to 300 guests.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is outside catering allowed at J&amp;P Banquet?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    We have an excellent in-house catering team that offers a wide variety of multi-cuisine menus.
+                    Outside catering is <strong>not permitted</strong> for hygiene and quality assurance reasons.
+                    However, you are welcome to bring your own celebration cake or specific traditional sweets for
+                    distribution.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    How do I block or confirm a date for my event?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    You can confirm your date by submitting the inquiry form above or calling us directly. A booking is
+                    confirmed upon payment of a <strong>25% advance deposit</strong>. The remaining amount is due 7 days
+                    before the event date.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is there parking available at the venue?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    Yes! We have a <strong>dedicated multi-level parking facility</strong> that can accommodate over 400
+                    vehicles. For large events we also offer <strong>valet parking service</strong> as an add-on.
+                    Additionally, there is street parking available in the nearby lanes.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Can I visit the hall before booking?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    Absolutely! We encourage site visits so you can see the space and visualise your event. Please call
+                    us or send an inquiry to <strong>schedule a free site tour</strong> with our event manager. We are
+                    available Monday through Saturday, 10 AM to 6 PM.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Do you allow decorators from outside the hall?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    Yes! You may bring your own decorator. We have a list of <strong>preferred partners</strong> who are
+                    familiar with our venue and can set up efficiently. Our team will provide them access for setup the
+                    day before the event. Please note that all decorations must be approved by our venue manager.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    What is the cancellation and refund policy?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    Cancellations made <strong>30+ days before</strong> the event date will receive a 75% refund of the
+                    advance deposit. Cancellations between 15–29 days prior will receive a 50% refund. Cancellations
+                    within 14 days of the event are non-refundable. Date rescheduling is allowed once, subject to
+                    availability.
+                </div>
+            </div>
+
+            <div class="faq-item">
+                <div class="faq-question">
+                    Is the hall fully air-conditioned?
+                    <div class="faq-icon">+</div>
+                </div>
+                <div class="faq-answer">
+                    Yes, J&amp;P Banquet Hall is <strong>fully centrally air-conditioned</strong> throughout all areas
+                    including the main hall, foyer, bridal rooms, and washrooms. We also have a full <strong>generator
+                        backup</strong> to ensure uninterrupted power during your event.
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+        <h2 class="reveal">Didn't Find Your Answer?</h2>
+        <p class="reveal">Our team is just a call or message away. We're happy to discuss any details about your event.
+        </p>
+        <a href="tel:+919876543210" class="btn btn-primary reveal"><i class="fa-solid fa-phone"></i> Call Us Now</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+            <div class="footer-logo-section">
+                <div class="nav-logo">
+                    <img src="images/Banquet_logo.png" alt="J&amp;P Logo"> J&amp;P Banquet
+                </div>
+                <p>A premier banquet hall in the heart of the city, creating extraordinary events since 2005.</p>
+                <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/jnp_banquet_25?igsh=MTltOTN4ZjF5ZDhjMg%3D%3D" target="_blank"
+                        aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-col">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="index.html">Home</a></li>
+                    <li><a href="packages.html">Packages & Pricing</a></li>
+                    <li><a href="gallery.html">Photo Gallery</a></li>
+                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="contact.html">Contact Us</a></li>
+                    <li><a href="#faq">FAQs</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Events We Host</h4>
+                <ul>
+                    <li><a href="#">Weddings</a></li>
+                    <li><a href="#">Engagement Parties</a></li>
+                    <li><a href="#">Birthday Parties</a></li>
+                    <li><a href="#">Haldi Ceremony</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Contact</h4>
+                <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><span>12, J&amp;P Complex,
+                        Andheri West, Mumbai 400053</span></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span>+91 98194 86104<br>+91
+                        96655 22814</span>
+                </div>
+                <div class="footer-contact-item"><i
+                        class="fa-solid fa-envelope icon"></i><span>info@jnpbanquet.in</span></div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2024 <span>J&amp;P Banquet</span>. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script src="js/form.js"></script>
+</body>
+
+</html>

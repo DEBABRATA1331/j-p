@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gallery Manager – J&amp;P Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="dashboard.html">
+        <img src="../images/Banquet_logo.png" alt="J&P Logo" onerror="this.style.display='none'">
+        <div class="brand">J&amp;P Banquet<span>Admin Panel</span></div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Main</div>
+        <a href="dashboard.html" class="sidebar-link"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Content</div>
+        <a href="gallery-admin.html" class="sidebar-link active"><i class="fa-solid fa-images"></i> Gallery</a>
+        <a href="packages-admin.html" class="sidebar-link"><i class="fa-solid fa-layer-group"></i> Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Site</div>
+        <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="top-bar">
+      <div>
+        <div class="page-title">Gallery</div>
+        <div class="breadcrumb"><span>Admin</span> / Gallery</div>
+      </div>
+      <button class="topbar-hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+    </div>
+
+    <div class="admin-content">
+      <div class="panel-header">
+        <h2><i class="fa-solid fa-images" style="color:var(--accent);margin-right:8px;"></i> Gallery Items</h2>
+        <button class="btn btn-accent" id="btn-add-gallery">
+          <i class="fa-solid fa-plus"></i> Add Item
+        </button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="gallery-table">
+          <thead>
+            <tr>
+              <th>Photo</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="gallery-tbody">
+            <tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-spinner fa-spin"></i><p>Loading…</p></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="gallery-modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modal-close"><i class="fa-solid fa-xmark"></i></button>
+    <div class="modal-title"><i class="fa-solid fa-image"></i> <span id="modal-gallery-title">Add Gallery Item</span></div>
+
+    <form id="gallery-form" novalidate>
+      <input type="hidden" id="g-row-id">
+
+      <div class="form-group">
+        <label for="g-title">Title *</label>
+        <input type="text" id="g-title" placeholder="e.g. Grand Wedding Hall Setup" required>
+      </div>
+
+      <div class="form-row-2">
+        <div class="form-group">
+          <label for="g-category">Category *</label>
+          <select id="g-category" required>
+            <option value="">Select…</option>
+            <option value="wedding">Wedding</option>
+            <option value="engagement">Engagement</option>
+            <option value="birthday">Birthday</option>
+            <option value="haldi">Haldi Ceremony</option>
+            <option value="corporate">Corporate</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="g-status">Status</label>
+          <select id="g-status">
+            <option value="active">Active</option>
+            <option value="hidden">Hidden</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="g-photo-url">Google Drive Photo URL *</label>
+        <input type="url" id="g-photo-url" placeholder="https://drive.google.com/uc?id=FILE_ID" required>
+        <small>Paste the direct image link from Google Drive. See README for how to generate this URL.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="g-description">Description</label>
+        <textarea id="g-description" placeholder="A brief description of the event or photo…"></textarea>
+      </div>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-outline" id="cancel-gallery">Cancel</button>
+        <button type="submit" class="btn btn-accent" id="save-gallery-btn">
+          <i class="fa-solid fa-floppy-disk"></i> Save
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><i class="fa-solid fa-check-circle"></i><span id="toast-msg"></span></div>
+
+<script src="js/admin.js"></script>
+<script>
+  requireAuth();
+
+  let galleryData = [];
+  let editingId = null;
+
+  async function loadGallery() {
+    const tbody = document.getElementById('gallery-tbody');
+    try {
+      galleryData = await apiFetch('/api/gallery');
+      if (!galleryData.length) {
+        tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-images"></i><p>No gallery items yet. Click "Add Item" to get started.</p></div></td></tr>`;
+        return;
+      }
+      tbody.innerHTML = galleryData.map(item => `
+        <tr data-id="${item.id}">
+          <td>
+            ${item.photoUrl
+              ? `<img class="img-thumb" src="${item.photoUrl}" alt="${item.title}" onerror="this.style.display='none'">`
+              : `<div class="no-img"><i class="fa-solid fa-image"></i></div>`}
+          </td>
+          <td><strong>${item.title}</strong></td>
+          <td><span style="text-transform:capitalize;">${item.category || '–'}</span></td>
+          <td style="max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${item.description || '–'}</td>
+          <td>
+            <div class="table-actions">
+              <button class="btn btn-outline btn-sm" onclick="openEdit('${item.id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteItem('${item.id}')"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    } catch(e) {
+      tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-triangle-exclamation"></i><p>Failed to load data. Check backend connection.</p></div></td></tr>`;
+    }
+  }
+
+  function openAdd() {
+    editingId = null;
+    document.getElementById('modal-gallery-title').textContent = 'Add Gallery Item';
+    document.getElementById('gallery-form').reset();
+    document.getElementById('g-row-id').value = '';
+    document.getElementById('gallery-modal').classList.add('open');
+  }
+
+  function openEdit(id) {
+    editingId = id;
+    const item = galleryData.find(g => g.id === id);
+    if (!item) return;
+    document.getElementById('modal-gallery-title').textContent = 'Edit Gallery Item';
+    document.getElementById('g-row-id').value = item.id;
+    document.getElementById('g-title').value = item.title || '';
+    document.getElementById('g-category').value = item.category || '';
+    document.getElementById('g-status').value = item.status || 'active';
+    document.getElementById('g-photo-url').value = item.photoUrl || '';
+    document.getElementById('g-description').value = item.description || '';
+    document.getElementById('gallery-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('gallery-modal').classList.remove('open');
+  }
+
+  async function deleteItem(id) {
+    if (!confirm('Delete this gallery item? This cannot be undone.')) return;
+    try {
+      await apiFetch(`/api/gallery/${id}`, 'DELETE');
+      showToast('Gallery item deleted.', 'success');
+      loadGallery();
+    } catch(e) {
+      showToast('Failed to delete item.', 'error');
+    }
+  }
+
+  document.getElementById('gallery-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('save-gallery-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving…';
+
+    const payload = {
+      title: document.getElementById('g-title').value.trim(),
+      category: document.getElementById('g-category').value,
+      status: document.getElementById('g-status').value,
+      photoUrl: document.getElementById('g-photo-url').value.trim(),
+      description: document.getElementById('g-description').value.trim(),
+    };
+
+    try {
+      if (editingId) {
+        payload.id = editingId;
+        await apiFetch(`/api/gallery/${editingId}`, 'PUT', payload);
+        showToast('Gallery item updated!', 'success');
+      } else {
+        await apiFetch('/api/gallery', 'POST', payload);
+        showToast('Gallery item added!', 'success');
+      }
+      closeModal();
+      loadGallery();
+    } catch(e) {
+      showToast(e.message || 'Failed to save. Try again.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save';
+    }
+  });
+
+  document.getElementById('btn-add-gallery').addEventListener('click', openAdd);
+  document.getElementById('modal-close').addEventListener('click', closeModal);
+  document.getElementById('cancel-gallery').addEventListener('click', closeModal);
+  document.getElementById('gallery-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+  });
+
+  loadGallery();
+</script>
+</body>
+</html>

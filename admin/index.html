@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login – J&amp;P Banquet</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="login-page">
+  <div class="login-box">
+    <div class="login-logo">
+      <img src="../images/Banquet_logo.png" alt="J&P Logo" onerror="this.style.display='none'">
+      <h1>J&amp;P Banquet</h1>
+      <span>Admin Portal</span>
+    </div>
+
+    <form class="login-form" id="login-form" novalidate>
+      <div id="login-error" class="login-error">
+        <i class="fa-solid fa-circle-exclamation"></i> Invalid username or password.
+      </div>
+
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" placeholder="admin" autocomplete="username" required>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+
+      <button type="submit" class="btn-login" id="login-btn">
+        <i class="fa-solid fa-right-to-bracket"></i>
+        Sign In
+      </button>
+    </form>
+
+    <div class="back-link">
+      <a href="../index.html"><i class="fa-solid fa-arrow-left"></i> Back to Website</a>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Check if already logged in
+  if (localStorage.getItem('jandp_admin_token')) {
+    window.location.href = 'dashboard.html';
+  }
+
+  const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+    ? 'http://localhost:3000'
+    : 'https://jandp-banquet-api.onrender.com'; // Update with your Render URL after deploy
+
+  document.getElementById('login-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('login-btn');
+    const errEl = document.getElementById('login-error');
+    errEl.classList.remove('show');
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in…';
+    btn.disabled = true;
+
+    const username = document.getElementById('username').value.trim();
+    const password = document.getElementById('password').value;
+
+    try {
+      const res = await fetch(`${API_BASE}/api/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username, password })
+      });
+      const data = await res.json();
+      if (res.ok && data.token) {
+        localStorage.setItem('jandp_admin_token', data.token);
+        window.location.href = 'dashboard.html';
+      } else {
+        errEl.textContent = data.message || 'Invalid username or password.';
+        errEl.classList.add('show');
+        btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+        btn.disabled = false;
+      }
+    } catch (err) {
+      errEl.textContent = 'Cannot connect to server. Make sure the backend is running.';
+      errEl.classList.add('show');
+      btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
