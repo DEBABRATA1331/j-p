@@ -3,10 +3,7 @@
  * Handles: Auth check, API fetch wrapper, logout, toast, sidebar
  */
 
-// Detect environment: use localhost backend in dev, Render URL in production
-const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-  ? 'http://localhost:3000'
-  : 'https://jandp-banquet-api.onrender.com'; // Update with your Render URL after deploy
+const API_BASE = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
 
 /* ── AUTH ─────────────────────────── */
 function requireAuth() {
@@ -37,37 +34,41 @@ function logout() {
   window.location.href = 'index.html';
 }
 
-/* ── API FETCH WRAPPER (Express REST Backend) ────────────── */
-async function apiFetch(path, method = 'GET', body = null) {
-  const token = localStorage.getItem('jandp_admin_token');
+/* ── API FETCH WRAPPER (App Script Version) ────────────── */
+async function apiFetch(action, method = 'GET', body = null) {
+  // We must use x-www-form-urlencoded to avoid App Script CORS preflight blocks
+  const url = API_BASE;
+  
+  const formData = new URLSearchParams();
+  formData.append('action', action);
+  formData.append('method', method);
+  
+  if (body) {
+    formData.append('data', JSON.stringify(body));
+  }
 
-  const options = {
-    method,
+  const res = await fetch(url, {
+    method: 'POST',
+    body: formData,
     headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+      'Content-Type': 'application/x-www-form-urlencoded'
     }
-  };
+  });
 
-  if (body && method !== 'GET') {
-    options.body = JSON.stringify(body);
+  const text = await res.text();
+  
+  let data;
+  try {
+    data = JSON.parse(text);
+  } catch (e) {
+    throw new Error('Invalid response from server. Make sure the App Script Web App is deployed as "Anyone".');
   }
 
-  const res = await fetch(`${API_BASE}${path}`, options);
-
-  // Token expired or invalid – force logout
-  if (res.status === 401) {
-    logout();
-    throw new Error('Session expired. Please log in again.');
+  if (data.status === 'error' || data.error) {
+    throw new Error(data.error || data.message || 'Operation failed');
   }
 
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.message || `Request failed (${res.status})`);
-  }
-
-  return data;
+  return data.data || data;
 }
 
 /* ── TOAST ────────────────────────── */

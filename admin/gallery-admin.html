@@ -29,6 +29,10 @@
         <a href="packages-admin.html" class="sidebar-link"><i class="fa-solid fa-layer-group"></i> Packages</a>
       </div>
       <div class="sidebar-section">
+        <div class="sidebar-section-title">CRM</div>
+        <a href="booking-crm.html" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      </div>
+      <div class="sidebar-section">
         <div class="sidebar-section-title">Site</div>
         <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
       </div>
@@ -146,7 +150,7 @@
   async function loadGallery() {
     const tbody = document.getElementById('gallery-tbody');
     try {
-      galleryData = await apiFetch('/api/gallery');
+      galleryData = await apiFetch('getGallery');
       if (!galleryData.length) {
         tbody.innerHTML = `<tr><td colspan="5"><div class="empty-state"><i class="fa-solid fa-images"></i><p>No gallery items yet. Click "Add Item" to get started.</p></div></td></tr>`;
         return;
@@ -203,7 +207,7 @@
   async function deleteItem(id) {
     if (!confirm('Delete this gallery item? This cannot be undone.')) return;
     try {
-      await apiFetch(`/api/gallery/${id}`, 'DELETE');
+      await apiFetch('deleteGallery', 'POST', { id });
       showToast('Gallery item deleted.', 'success');
       loadGallery();
     } catch(e) {
@@ -228,10 +232,10 @@
     try {
       if (editingId) {
         payload.id = editingId;
-        await apiFetch(`/api/gallery/${editingId}`, 'PUT', payload);
+        await apiFetch('editGallery', 'POST', payload);
         showToast('Gallery item updated!', 'success');
       } else {
-        await apiFetch('/api/gallery', 'POST', payload);
+        await apiFetch('addGallery', 'POST', payload);
         showToast('Gallery item added!', 'success');
       }
       closeModal();

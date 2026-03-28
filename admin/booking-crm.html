@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking CRM – J&P Admin</title>
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <style>
+    /* ── CRM STATS ── */
+    .crm-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:1rem; margin-bottom:2rem; }
+    .crm-stat { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.4rem; display:flex; gap:1rem; align-items:center; }
+    .crm-stat-icon { width:48px; height:48px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.3rem; flex-shrink:0; }
+    .crm-stat-icon.orange { background:rgba(228,160,50,.15); color:#e4a032; }
+    .crm-stat-icon.green  { background:rgba(52,199,89,.15);  color:#34c759; }
+    .crm-stat-icon.blue   { background:rgba(100,120,255,.15);color:#6478ff; }
+    .crm-stat-icon.red    { background:rgba(255,70,70,.15);   color:#ff4646; }
+    .crm-stat-num { font-size:1.7rem; font-weight:700; color:var(--text); }
+    .crm-stat-label { font-size:.78rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:.05em; }
+
+    /* ── TABS ── */
+    .crm-tabs { display:flex; gap:.5rem; margin-bottom:1.5rem; border-bottom:1px solid var(--border); }
+    .crm-tab { padding:.6rem 1.2rem; border:none; background:none; color:var(--text-muted); font-size:.92rem; font-family:'Outfit',sans-serif; cursor:pointer; border-bottom:2px solid transparent; transition:.2s; }
+    .crm-tab.active { color:var(--accent); border-bottom-color:var(--accent); font-weight:600; }
+
+    /* ── CALENDAR ── */
+    .calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:1rem; }
+    .cal-nav { background:var(--card-bg); border:1px solid var(--border); border-radius:8px; padding:.4rem .8rem; color:var(--text); cursor:pointer; font-size:1rem; }
+    .calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+    .cal-day-name { text-align:center; font-size:.72rem; color:var(--text-muted); text-transform:uppercase; font-weight:600; padding:.4rem 0; }
+    .cal-day { text-align:center; padding:.55rem .2rem; border-radius:8px; font-size:.85rem; cursor:default; color:var(--text-muted); min-height:38px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; gap:2px; }
+    .cal-day.current-month { color:var(--text); }
+    .cal-day.today { background:rgba(228,160,50,.1); color:var(--accent) !important; font-weight:700; }
+    .cal-day.has-booking { cursor:pointer; }
+    .cal-dot { width:6px; height:6px; border-radius:50%; }
+    .cal-dot.confirmed { background:#34c759; }
+    .cal-dot.pending   { background:#e4a032; }
+    .cal-dot.cancelled { background:#ff4646; }
+
+    /* ── BOOKINGS TABLE ── */
+    .status-badge { display:inline-block; padding:.22rem .7rem; border-radius:20px; font-size:.72rem; font-weight:600; text-transform:capitalize; }
+    .status-badge.confirmed { background:rgba(52,199,89,.15); color:#34c759; }
+    .status-badge.pending   { background:rgba(228,160,50,.15); color:#e4a032; }
+    .status-badge.cancelled { background:rgba(255,70,70,.15);  color:#ff4646; }
+    .status-badge.new       { background:rgba(100,120,255,.15);color:#6478ff; }
+    .status-badge.responded { background:rgba(52,199,89,.15); color:#34c759; }
+
+    /* ── MODAL ── */
+    .modal-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+    .modal-grid .full { grid-column:1/-1; }
+    @media(max-width:600px) { .modal-grid { grid-template-columns:1fr; } }
+
+    /* ── CONTACT CARD ── */
+    .contact-card { background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:1.2rem 1.5rem; margin-bottom:1rem; display:flex; flex-wrap:wrap; gap:1rem; align-items:flex-start; justify-content:space-between; }
+    .contact-meta { font-size:.82rem; color:var(--text-muted); margin-top:.25rem; display:flex; flex-wrap:wrap; gap:.6rem; }
+    .contact-meta span { display:flex; align-items:center; gap:.3rem; }
+    .contact-message { font-size:.9rem; color:var(--text); margin-top:.5rem; font-style:italic; }
+    .contact-actions { display:flex; gap:.5rem; flex-shrink:0; }
+  </style>
+</head>
+<body>
+<div class="admin-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <a href="dashboard.html">
+        <img src="../images/Banquet_logo.png" alt="J&P Logo" onerror="this.style.display='none'">
+        <div class="brand">J&P Banquet<span>Admin Panel</span></div>
+      </a>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Main</div>
+        <a href="dashboard.html" class="sidebar-link"><i class="fa-solid fa-gauge-high"></i> Dashboard</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Content</div>
+        <a href="gallery-admin.html" class="sidebar-link"><i class="fa-solid fa-images"></i> Gallery</a>
+        <a href="packages-admin.html" class="sidebar-link"><i class="fa-solid fa-layer-group"></i> Packages</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">CRM</div>
+        <a href="booking-crm.html" class="sidebar-link active"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Site</div>
+        <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
+      </div>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="logout-btn" id="logout-btn"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="admin-main">
+    <div class="top-bar">
+      <div>
+        <div class="page-title">Booking CRM</div>
+        <div class="breadcrumb">Admin / <span>Bookings</span></div>
+      </div>
+      <div style="display:flex;gap:.8rem;align-items:center;">
+        <button class="btn btn-primary" id="add-booking-btn" style="padding:.55rem 1.2rem;font-size:.88rem;">
+          <i class="fa-solid fa-plus"></i> Add Booking
+        </button>
+        <button class="topbar-hamburger" id="hamburger"><i class="fa-solid fa-bars"></i></button>
+      </div>
+    </div>
+
+    <div class="admin-content">
+      <!-- Stats -->
+      <div class="crm-stats">
+        <div class="crm-stat"><div class="crm-stat-icon orange"><i class="fa-solid fa-calendar-days"></i></div><div><div class="crm-stat-num" id="stat-total">–</div><div class="crm-stat-label">Total Bookings</div></div></div>
+        <div class="crm-stat"><div class="crm-stat-icon green"><i class="fa-solid fa-circle-check"></i></div><div><div class="crm-stat-num" id="stat-confirmed">–</div><div class="crm-stat-label">Confirmed</div></div></div>
+        <div class="crm-stat"><div class="crm-stat-icon blue"><i class="fa-solid fa-clock"></i></div><div><div class="crm-stat-num" id="stat-pending">–</div><div class="crm-stat-label">Pending</div></div></div>
+        <div class="crm-stat"><div class="crm-stat-icon red"><i class="fa-solid fa-indian-rupee-sign"></i></div><div><div class="crm-stat-num" id="stat-revenue">–</div><div class="crm-stat-label">Total Revenue</div></div></div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="crm-tabs">
+        <button class="crm-tab active" data-tab="calendar">📅 Calendar</button>
+        <button class="crm-tab" data-tab="bookings">📋 All Bookings</button>
+        <button class="crm-tab" data-tab="contacts">📬 Contact Requests</button>
+      </div>
+
+      <!-- CALENDAR TAB -->
+      <div id="tab-calendar">
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;padding:1.5rem;">
+          <div class="calendar-header">
+            <button class="cal-nav" id="prev-month"><i class="fa-solid fa-chevron-left"></i></button>
+            <h3 id="cal-title" style="font-size:1.1rem;font-weight:700;color:var(--text);"></h3>
+            <button class="cal-nav" id="next-month"><i class="fa-solid fa-chevron-right"></i></button>
+          </div>
+          <div class="calendar-grid" id="calendar-grid"></div>
+          <div style="display:flex;gap:1.2rem;margin-top:1.2rem;font-size:.8rem;color:var(--text-muted);flex-wrap:wrap;">
+            <span><span class="cal-dot confirmed" style="display:inline-block;margin-right:4px;"></span>Confirmed</span>
+            <span><span class="cal-dot pending"   style="display:inline-block;margin-right:4px;"></span>Pending</span>
+            <span><span class="cal-dot cancelled" style="display:inline-block;margin-right:4px;"></span>Cancelled</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOOKINGS TAB -->
+      <div id="tab-bookings" style="display:none;">
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:14px;overflow:hidden;">
+          <div style="padding:1rem 1.5rem;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:1rem;">
+            <input type="text" id="search-bookings" placeholder="Search by name, event type…" style="flex:1;padding:.5rem .9rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;">
+            <select id="filter-status" style="padding:.5rem .8rem;border:1px solid var(--border);border-radius:8px;background:var(--input-bg);color:var(--text);font-size:.88rem;">
+              <option value="all">All Status</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="pending">Pending</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div style="overflow-x:auto;">
+            <table class="admin-table" style="width:100%;">
+              <thead><tr>
+                <th>Client</th><th>Event Date</th><th>Event Type</th><th>Package</th><th>Amount</th><th>Status</th><th>Actions</th>
+              </tr></thead>
+              <tbody id="bookings-tbody"><tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- CONTACTS TAB -->
+      <div id="tab-contacts" style="display:none;">
+        <div id="contacts-list"><div style="text-align:center;padding:3rem;color:var(--text-muted);"><i class="fa-solid fa-spinner fa-spin"></i> Loading…</div></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"><i class="fa-solid fa-circle-check"></i><span id="toast-msg"></span></div>
+
+<!-- ADD/EDIT BOOKING MODAL -->
+<div class="modal-overlay" id="booking-modal" style="display:none;">
+  <div class="modal" style="max-width:640px;">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Booking</h3>
+      <button class="modal-close" id="close-modal">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="booking-form">
+        <div class="modal-grid">
+          <div class="form-group">
+            <label class="form-label">Client Name *</label>
+            <input type="text" class="form-input" id="f-clientName" required placeholder="e.g. Sharma Family">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone</label>
+            <input type="tel" class="form-input" id="f-phone" placeholder="+91 98765 43210">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" id="f-email" placeholder="client@email.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Event Type</label>
+            <select class="form-input" id="f-eventType">
+              <option value="">Select type</option>
+              <option value="Wedding">Wedding</option>
+              <option value="Engagement">Engagement Party</option>
+              <option value="Birthday">Birthday Party</option>
+              <option value="Haldi">Haldi Ceremony</option>
+              <option value="Corporate">Corporate Event</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Event Date *</label>
+            <input type="date" class="form-input" id="f-eventDate" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Guest Count</label>
+            <input type="number" class="form-input" id="f-guestCount" placeholder="e.g. 300" min="1">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Package</label>
+            <input type="text" class="form-input" id="f-package" placeholder="e.g. Anand Standard">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Amount (₹)</label>
+            <input type="number" class="form-input" id="f-amount" placeholder="e.g. 110000" min="0">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Status</label>
+            <select class="form-input" id="f-status">
+              <option value="pending">Pending</option>
+              <option value="confirmed">Confirmed</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+          <div class="form-group full">
+            <label class="form-label">Notes</label>
+            <textarea class="form-input" id="f-notes" rows="3" placeholder="Any special requirements or notes…"></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn" id="cancel-modal" style="background:var(--card-bg);border:1px solid var(--border);color:var(--text);">Cancel</button>
+      <button class="btn btn-primary" id="save-booking"><i class="fa-solid fa-floppy-disk"></i> Save Booking</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/admin.js"></script>
+<script>
+requireAuth();
+
+const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+let bookingsData = [], contactsData = [];
+let calYear = new Date().getFullYear(), calMonth = new Date().getMonth();
+let editingId = null;
+
+// ── LOAD ALL DATA ──────────────────────────────────────────────
+async function loadAll() {
+  try {
+    [bookingsData, contactsData] = await Promise.all([
+      apiFetch('getBookings'), apiFetch('getContacts')
+    ]);
+  } catch(e) { bookingsData = []; contactsData = []; }
+  updateStats();
+  renderCalendar();
+  renderBookings();
+  renderContacts();
+}
+loadAll();
+
+// ── STATS ──────────────────────────────────────────────────────
+function updateStats() {
+  const confirmed = bookingsData.filter(b => b.status === 'confirmed');
+  const pending   = bookingsData.filter(b => b.status === 'pending');
+  const revenue   = confirmed.reduce((s,b) => s + (parseFloat(b.amount)||0), 0);
+  document.getElementById('stat-total').textContent     = bookingsData.length;
+  document.getElementById('stat-confirmed').textContent = confirmed.length;
+  document.getElementById('stat-pending').textContent   = pending.length;
+  document.getElementById('stat-revenue').textContent   = '₹' + revenue.toLocaleString('en-IN');
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────
+function renderCalendar() {
+  document.getElementById('cal-title').textContent = `${MONTH_NAMES[calMonth]} ${calYear}`;
+  const grid = document.getElementById('calendar-grid');
+  const today = new Date();
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+
+  // Build booking map: date string → [{status}]
+  const bookingMap = {};
+  bookingsData.forEach(b => {
+    if (!b.eventDate) return;
+    const d = b.eventDate.substring(0,10);
+    if (!bookingMap[d]) bookingMap[d] = [];
+    bookingMap[d].push(b.status);
+  });
+
+  const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+  let html = days.map(d => `<div class="cal-day-name">${d}</div>`).join('');
+
+  // Empty cells
+  for (let i = 0; i < firstDay; i++) html += `<div class="cal-day"></div>`;
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const dateStr = `${calYear}-${String(calMonth+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const isToday = today.getFullYear()===calYear && today.getMonth()===calMonth && today.getDate()===d;
+    const statuses = bookingMap[dateStr] || [];
+    const dots = [...new Set(statuses)].map(s => `<span class="cal-dot ${s}"></span>`).join('');
+    html += `<div class="cal-day current-month${isToday?' today':''}${statuses.length?' has-booking':''}" title="${statuses.length ? statuses.length+' booking(s)' : ''}">
+      <span>${d}</span>${dots}
+    </div>`;
+  }
+  grid.innerHTML = html;
+}
+
+document.getElementById('prev-month').onclick = () => { calMonth--; if(calMonth<0){calMonth=11;calYear--;} renderCalendar(); };
+document.getElementById('next-month').onclick = () => { calMonth++; if(calMonth>11){calMonth=0;calYear++;} renderCalendar(); };
+
+// ── BOOKINGS TABLE ───────────────────────────────────────────
+function renderBookings(filter='all', search='') {
+  const tbody = document.getElementById('bookings-tbody');
+  let data = bookingsData;
+  if (filter !== 'all') data = data.filter(b => b.status === filter);
+  if (search) data = data.filter(b => (b.clientName+b.eventType+b.package).toLowerCase().includes(search.toLowerCase()));
+  if (!data.length) { tbody.innerHTML = `<tr><td colspan="7"><div class="empty-state"><i class="fa-solid fa-calendar-xmark"></i><p>No bookings found.</p></div></td></tr>`; return; }
+  tbody.innerHTML = data.map(b => `
+    <tr>
+      <td><strong>${b.clientName}</strong><br><span style="font-size:.78rem;color:var(--text-muted);">${b.phone||''}</span></td>
+      <td>${b.eventDate ? new Date(b.eventDate).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '–'}</td>
+      <td>${b.eventType||'–'}</td>
+      <td>${b.package||'–'}</td>
+      <td>${b.amount ? '₹'+parseFloat(b.amount).toLocaleString('en-IN') : '–'}</td>
+      <td><span class="status-badge ${b.status||'pending'}">${b.status||'pending'}</span></td>
+      <td>
+        <button class="btn-icon edit-btn" onclick="openEdit('${b.id}')" title="Edit"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn-icon delete-btn" onclick="deleteB('${b.id}')" title="Delete"><i class="fa-solid fa-trash"></i></button>
+      </td>
+    </tr>`).join('');
+}
+
+document.getElementById('search-bookings').oninput = e => renderBookings(document.getElementById('filter-status').value, e.target.value);
+document.getElementById('filter-status').onchange = e => renderBookings(e.target.value, document.getElementById('search-bookings').value);
+
+// ── CONTACTS ─────────────────────────────────────────────────
+function renderContacts() {
+  const el = document.getElementById('contacts-list');
+  if (!contactsData.length) { el.innerHTML = '<div style="text-align:center;padding:3rem;color:var(--text-muted);"><i class="fa-solid fa-inbox" style="font-size:2rem;display:block;margin-bottom:.5rem;"></i>No contact requests yet.</div>'; return; }
+  el.innerHTML = [...contactsData].reverse().map(c => `
+    <div class="contact-card">
+      <div style="flex:1;">
+        <strong style="color:var(--text);">${c.name}</strong>
+        <span class="status-badge ${c.status||'new'}" style="margin-left:.6rem;">${c.status||'new'}</span>
+        <div class="contact-meta">
+          ${c.email ? `<span><i class="fa-solid fa-envelope"></i>${c.email}</span>` : ''}
+          ${c.phone ? `<span><i class="fa-solid fa-phone"></i>${c.phone}</span>` : ''}
+          ${c.eventType ? `<span><i class="fa-solid fa-star"></i>${c.eventType}</span>` : ''}
+          ${c.eventDate ? `<span><i class="fa-solid fa-calendar"></i>${c.eventDate}</span>` : ''}
+          ${c.submittedAt ? `<span><i class="fa-solid fa-clock"></i>${new Date(c.submittedAt).toLocaleDateString('en-IN')}</span>` : ''}
+        </div>
+        ${c.message ? `<div class="contact-message">"${c.message}"</div>` : ''}
+      </div>
+      <div class="contact-actions">
+        ${c.status !== 'responded' ? `<button class="btn btn-primary" onclick="markContacted('${c.id}')" style="padding:.4rem .9rem;font-size:.8rem;"><i class="fa-solid fa-check"></i> Mark Responded</button>` : ''}
+        <a href="mailto:${c.email}" class="btn" style="padding:.4rem .9rem;font-size:.8rem;background:var(--card-bg);border:1px solid var(--border);color:var(--text);"><i class="fa-solid fa-envelope"></i></a>
+      </div>
+    </div>`).join('');
+}
+
+async function markContacted(id) {
+  try {
+    await apiFetch('updateContactStatus','POST',{id, status:'responded'});
+    const c = contactsData.find(x=>x.id===id);
+    if (c) c.status = 'responded';
+    renderContacts();
+    showToast('Marked as responded!','success');
+  } catch(e) { showToast(e.message,'error'); }
+}
+
+// ── TABS ──────────────────────────────────────────────────────
+document.querySelectorAll('.crm-tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.crm-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    ['calendar','bookings','contacts'].forEach(id => {
+      document.getElementById('tab-'+id).style.display = tab.dataset.tab===id ? '' : 'none';
+    });
+  };
+});
+
+// ── MODAL ─────────────────────────────────────────────────────
+function openModal(id=null) {
+  editingId = id;
+  const form = document.getElementById('booking-form');
+  form.reset();
+  document.getElementById('modal-title').textContent = id ? 'Edit Booking' : 'Add Booking';
+  if (id) {
+    const b = bookingsData.find(x=>x.id===id);
+    if (b) {
+      document.getElementById('f-clientName').value = b.clientName||'';
+      document.getElementById('f-phone').value      = b.phone||'';
+      document.getElementById('f-email').value      = b.email||'';
+      document.getElementById('f-eventType').value  = b.eventType||'';
+      document.getElementById('f-eventDate').value  = b.eventDate||'';
+      document.getElementById('f-guestCount').value = b.guestCount||'';
+      document.getElementById('f-package').value    = b.package||'';
+      document.getElementById('f-amount').value     = b.amount||'';
+      document.getElementById('f-status').value     = b.status||'pending';
+      document.getElementById('f-notes').value      = b.notes||'';
+    }
+  }
+  document.getElementById('booking-modal').style.display = 'flex';
+}
+function openEdit(id) { openModal(id); }
+function closeModal() { document.getElementById('booking-modal').style.display = 'none'; editingId = null; }
+
+document.getElementById('add-booking-btn').onclick = () => openModal();
+document.getElementById('close-modal').onclick = closeModal;
+document.getElementById('cancel-modal').onclick = closeModal;
+
+document.getElementById('save-booking').onclick = async () => {
+  const payload = {
+    clientName : document.getElementById('f-clientName').value.trim(),
+    phone      : document.getElementById('f-phone').value.trim(),
+    email      : document.getElementById('f-email').value.trim(),
+    eventType  : document.getElementById('f-eventType').value,
+    eventDate  : document.getElementById('f-eventDate').value,
+    guestCount : document.getElementById('f-guestCount').value,
+    package    : document.getElementById('f-package').value.trim(),
+    amount     : document.getElementById('f-amount').value,
+    status     : document.getElementById('f-status').value,
+    notes      : document.getElementById('f-notes').value.trim(),
+  };
+  if (!payload.clientName || !payload.eventDate) { showToast('Client name and event date are required.','error'); return; }
+  try {
+    if (editingId) {
+      payload.id = editingId;
+      await apiFetch('editBooking','POST',payload);
+      const i = bookingsData.findIndex(b=>b.id===editingId);
+      if (i>=0) bookingsData[i] = {...bookingsData[i],...payload};
+      showToast('Booking updated!','success');
+    } else {
+      const res = await apiFetch('addBooking','POST',payload);
+      bookingsData.push({...payload, id: res.id||Date.now().toString()});
+      showToast('Booking added!','success');
+    }
+    closeModal();
+    updateStats();
+    renderCalendar();
+    renderBookings(document.getElementById('filter-status').value, document.getElementById('search-bookings').value);
+  } catch(e) { showToast(e.message,'error'); }
+};
+
+// ── DELETE ───────────────────────────────────────────────────
+async function deleteB(id) {
+  if (!confirm('Delete this booking? This cannot be undone.')) return;
+  try {
+    await apiFetch('deleteBooking','POST',{id});
+    bookingsData = bookingsData.filter(b=>b.id!==id);
+    updateStats(); renderCalendar(); renderBookings();
+    showToast('Booking deleted.','success');
+  } catch(e) { showToast(e.message,'error'); }
+}
+</script>
+</body>
+</html>

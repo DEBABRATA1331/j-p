@@ -29,6 +29,10 @@
         <a href="packages-admin.html" class="sidebar-link active"><i class="fa-solid fa-layer-group"></i> Packages</a>
       </div>
       <div class="sidebar-section">
+        <div class="sidebar-section-title">CRM</div>
+        <a href="booking-crm.html" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      </div>
+      <div class="sidebar-section">
         <div class="sidebar-section-title">Site</div>
         <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
       </div>
@@ -163,7 +167,7 @@
   async function loadPackages() {
     const tbody = document.getElementById('pkg-tbody');
     try {
-      pkgData = await apiFetch('/api/packages');
+      pkgData = await apiFetch('getPackages');
       if (!pkgData.length) {
         tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state"><i class="fa-solid fa-layer-group"></i><p>No packages yet.</p></div></td></tr>`;
         return;
@@ -232,7 +236,7 @@
   async function deletePkg(id) {
     if (!confirm('Delete this package? This cannot be undone.')) return;
     try {
-      await apiFetch(`/api/packages/${id}`, 'DELETE');
+      await apiFetch('deletePackage', 'POST', { id });
       showToast('Package deleted.', 'success');
       loadPackages();
     } catch(e) {
@@ -263,10 +267,10 @@
     try {
       if (editingId) {
         payload.id = editingId;
-        await apiFetch(`/api/packages/${editingId}`, 'PUT', payload);
+        await apiFetch('editPackage', 'POST', payload);
         showToast('Package updated!', 'success');
       } else {
-        await apiFetch('/api/packages', 'POST', payload);
+        await apiFetch('addPackage', 'POST', payload);
         showToast('Package added!', 'success');
       }
       closePkgModal();

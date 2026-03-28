@@ -5,7 +5,7 @@ const formCard = document.querySelector('.form-card');
 const formSuccess = document.querySelector('.form-success');
 
 if (form) {
-    form.addEventListener('submit', function (e) {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
         let valid = true;
 
@@ -71,10 +71,36 @@ if (form) {
         }
 
         if (valid) {
-            // Simulate success
+            const btn = form.querySelector('button[type="submit"]');
+            const origText = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+            btn.disabled = true;
+
+            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
+            const payload = {
+                name      : document.getElementById('name').value.trim(),
+                email     : document.getElementById('email').value.trim(),
+                phone     : document.getElementById('phone').value.trim(),
+                eventType : document.getElementById('event-type').value,
+                eventDate : document.getElementById('event-date').value,
+                message   : document.getElementById('message').value.trim()
+            };
+            const formData = new URLSearchParams();
+            formData.append('action', 'addContact');
+            formData.append('data', JSON.stringify(payload));
+
+            try {
+                await fetch(APPS_SCRIPT_URL, {
+                    method : 'POST',
+                    body   : formData,
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+                });
+            } catch(err) { /* silently proceed – don't block success UX */ }
+
             form.style.display = 'none';
-            formSuccess.style.display = 'block';
+            document.getElementById('form-success').style.display = 'block';
         }
+
     });
 
     // Live validation: clear error on input

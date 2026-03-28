@@ -29,6 +29,10 @@
         <a href="packages-admin.html" class="sidebar-link"><i class="fa-solid fa-layer-group"></i> Packages</a>
       </div>
       <div class="sidebar-section">
+        <div class="sidebar-section-title">CRM</div>
+        <a href="booking-crm.html" class="sidebar-link"><i class="fa-solid fa-calendar-check"></i> Bookings</a>
+      </div>
+      <div class="sidebar-section">
         <div class="sidebar-section-title">Site</div>
         <a href="../index.html" target="_blank" class="sidebar-link"><i class="fa-solid fa-globe"></i> View Website</a>
       </div>
@@ -72,6 +76,13 @@
             <div class="dash-card-label">Website Status</div>
           </div>
         </div>
+        <div class="dash-card">
+          <div class="dash-card-icon" style="background:rgba(52,199,89,.15);color:#34c759;"><i class="fa-solid fa-calendar-days"></i></div>
+          <div>
+            <div class="dash-card-num" id="count-bookings">–</div>
+            <div class="dash-card-label">Bookings</div>
+          </div>
+        </div>
       </div>
 
       <!-- Quick Actions -->
@@ -89,6 +100,12 @@
           <p>Create and update event packages. Control pricing, descriptions, and package icons.</p>
           <a href="packages-admin.html" class="btn btn-accent btn-go"><i class="fa-solid fa-arrow-right"></i> Manage Packages</a>
         </div>
+        <div class="section-card">
+          <div class="section-card-icon" style="background:rgba(52,199,89,.1);color:#34c759;"><i class="fa-solid fa-calendar-check"></i></div>
+          <h3>Booking CRM</h3>
+          <p>Manage event bookings, view contact requests, and track booked dates on a calendar.</p>
+          <a href="booking-crm.html" class="btn btn-accent btn-go"><i class="fa-solid fa-arrow-right"></i> Open CRM</a>
+        </div>
       </div>
     </div>
   </main>
@@ -101,12 +118,14 @@
 
   async function loadDashboard() {
     try {
-      const [g, p] = await Promise.all([
+      const [g, p, b] = await Promise.all([
         apiFetch('getGallery'),
-        apiFetch('getPackages')
+        apiFetch('getPackages'),
+        apiFetch('getBookings')
       ]);
       document.getElementById('count-gallery').textContent = Array.isArray(g) ? g.length : '–';
       document.getElementById('count-packages').textContent = Array.isArray(p) ? p.length : '–';
+      document.getElementById('count-bookings').textContent = Array.isArray(b) ? b.length : '–';
     } catch(e) { /* silently fail */ }
   }
 </script>

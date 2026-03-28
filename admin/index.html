@@ -44,14 +44,12 @@
 </div>
 
 <script>
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
+
   // Check if already logged in
   if (localStorage.getItem('jandp_admin_token')) {
     window.location.href = 'dashboard.html';
   }
-
-  const API_BASE = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
-    ? 'http://localhost:3000'
-    : 'https://jandp-banquet-api.onrender.com'; // Update with your Render URL after deploy
 
   document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
@@ -65,23 +63,30 @@
     const password = document.getElementById('password').value;
 
     try {
-      const res = await fetch(`${API_BASE}/api/login`, {
+      const formData = new URLSearchParams();
+      formData.append('action', 'login');
+      formData.append('data', JSON.stringify({ username, password }));
+
+      const res = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
+        body: formData,
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
       });
+
       const data = await res.json();
-      if (res.ok && data.token) {
-        localStorage.setItem('jandp_admin_token', data.token);
+
+      if (data.status === 'success') {
+        // Store a simple token (username + timestamp) to mark session as active
+        localStorage.setItem('jandp_admin_token', btoa(username + ':' + Date.now()));
         window.location.href = 'dashboard.html';
       } else {
-        errEl.textContent = data.message || 'Invalid username or password.';
+        errEl.textContent = data.error || 'Invalid username or password.';
         errEl.classList.add('show');
         btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
         btn.disabled = false;
       }
     } catch (err) {
-      errEl.textContent = 'Cannot connect to server. Make sure the backend is running.';
+      errEl.textContent = 'Cannot connect. Check your internet connection.';
       errEl.classList.add('show');
       btn.innerHTML = '<i class="fa-solid fa-right-to-bracket"></i> Sign In';
       btn.disabled = false;
