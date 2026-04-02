@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -93,7 +93,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="packages.html">Packages</a></li>
                 <li><a href="gallery.html" class="active">Gallery</a></li>
-                <li><a href="blog.html">Blog</a></li>
+                <li><a href="blog.html">Events</a></li>
                 <li><a href="contact.html">Contact & FAQ</a></li>
                 <li><a href="contact.html" class="btn btn-primary" style="padding:0.55rem 1.4rem;">Book Now</a></li>
             </ul>
@@ -105,7 +105,202 @@
             <a href="index.html">Home</a>
             <a href="packages.html">Packages</a>
             <a href="gallery.html">Gallery</a>
-            <a href="blog.html">Blog</a>
+            <a href="blog.html">Events</a>
+            <a href="contact.html">Contact & FAQ</a>
+            <a href="contact.html" class="btn btn-primary" style="margin-top:0.5rem;justify-content:center;">Book
+                Now</a>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="decor-ring ring-1"></div>
+        <div class="decor-ring ring-2"></div>
+        <h1>Our <span>Gallery</span></h1>
+        <p>A collection of cherished moments â€” weddings, receptions, corporate galas & festive celebrations.</p>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="section section-light text-center">
+        <span class="section-badge reveal">âœ¦ Event Moments</span>
+        <h2 class="section-title reveal">Memories We've <span>Created Together</span></h2>
+        <div class="motif-divider reveal"><span>âœ¿</span></div>
+
+        <!-- Filter Tabs -->
+        <div class="filter-tabs reveal">
+            <button class="filter-btn active" data-filter="all">All Events</button>
+            <button class="filter-btn" data-filter="wedding"><i class="fa-solid fa-heart"
+                    style="color:var(--gold);"></i> Weddings</button>
+            <button class="filter-btn" data-filter="engagement"><i class="fa-solid fa-ring"
+                    style="color:var(--gold);"></i> Engagement Parties</button>
+            <button class="filter-btn" data-filter="birthday"><i class="fa-solid fa-cake-candles"
+                    style="color:var(--gold);"></i> Birthday Parties</button>
+            <button class="filter-btn" data-filter="haldi"><i class="fa-solid fa-hands-holding-circle"
+                    style="color:var(--gold);"></i> Haldi Ceremony</button>
+        </div>
+
+        <!-- Gallery Masonry Grid -->
+        <div class="gallery-grid" id="gallery-grid">
+            <div style="grid-column:1/-1;text-align:center;padding:3rem 0;">
+                <i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:2rem;"></i>
+                <p style="margin-top:1rem;color:#888;">Loading galleryâ€¦</p>
+            </div>
+        </div>
+
+        <script>
+        (async function loadGallery() {
+          const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
+          const grid = document.getElementById('gallery-grid');
+
+          // Static fallback gallery items
+          const FALLBACK = [
+            { id:'s1', title:'Grand Banquet Setup', category:'wedding', photoUrl:'images/hero-bg.png', description:'Grand Banquet Setup' },
+            { id:'s2', title:'Royal Table DÃ©cor', category:'wedding', photoUrl:'images/gallery-wedding.png', description:'Royal Table DÃ©cor' },
+            { id:'s3', title:'Grand 1st Birthday Setup', category:'birthday', photoUrl:'images/gallery-corporate.png', description:'Grand 1st Birthday Setup' },
+            { id:'s4', title:'The Sharma Engagement', category:'engagement', photoUrl:'', description:'The Sharma Engagement' },
+            { id:'s5', title:"Rohan's Haldi Ceremony", category:'haldi', photoUrl:'', description:"Rohan's Haldi Ceremony" },
+            { id:'s6', title:'Mandap & Stage DÃ©cor', category:'wedding', photoUrl:'', description:'Mandap & Stage DÃ©cor' },
+          ];
+
+          const COLORS = ['#8B4513,#C8973A','#2E5942,#6B9E7A','#4A0E2E,#C8296A','#0E3A5A,#1E90A0','#5A3A00,#E8A020','#2A0E5A,#7A3AE0'];
+
+          // Auto-convert Google Drive share links to embeddable thumbnail URLs
+          function fixImageUrl(url) {
+            if (!url) return '';
+            // Match /file/d/FILE_ID/ format
+            const match = url.match(/drive\.google\.com\/file\/d\/([^/?]+)/);
+            if (match) return `https://drive.google.com/thumbnail?id=${match[1]}&sz=w1000`;
+            // Match ?id=FILE_ID or &id=FILE_ID format
+            const match2 = url.match(/[?&]id=([^&]+)/);
+            if (url.includes('drive.google.com') && match2) return `https://drive.google.com/thumbnail?id=${match2[1]}&sz=w1000`;
+            return url;
+          }
+
+
+          function renderGallery(items) {
+            if (!items || items.length === 0) items = FALLBACK;
+            grid.innerHTML = items.filter(item => item.status !== 'hidden').map((item, i) => {
+              const colors = COLORS[i % COLORS.length].split(',');
+              const imgUrl = fixImageUrl(item.photoUrl);
+              const mediaHtml = imgUrl
+                ? `<img src="${imgUrl}" alt="${item.title}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`
+                  + `<div class="gallery-color-block" style="background:linear-gradient(135deg,${colors[0]},${colors[1]});height:220px;display:none;"><i class="fa-solid fa-image"></i></div>`
+                : `<div class="gallery-color-block" style="background:linear-gradient(135deg,${colors[0]},${colors[1]});height:220px;"><i class="fa-solid fa-image"></i></div>`;
+              return `
+              <div class="gallery-item" data-cat="${item.category || 'other'}">
+                ${mediaHtml}
+                <div class="g-overlay">
+                  <div>
+                    <div class="g-cat" style="text-transform:capitalize;">${item.category || ''}</div>
+                    <div class="g-label">${item.title}</div>
+                  </div>
+                </div>
+              </div>`;
+            }).join('');
+
+            // Re-attach filter and lightbox logic for new elements
+            attachFilterLogic();
+            attachLightboxLogic();
+          }
+
+          function attachFilterLogic() {
+            const filterBtns = document.querySelectorAll('.filter-btn');
+            const galleryItems = document.querySelectorAll('.gallery-item');
+            filterBtns.forEach(btn => {
+              btn.addEventListener('click', () => {
+                filterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                const filter = btn.getAttribute('data-filter');
+                galleryItems.forEach(item => {
+                  if (filter === 'all' || item.getAttribute('data-cat') === filter) {
+                    item.classList.remove('hidden');
+                    item.style.animation = 'fadeUp 0.45s ease both';
+                  } else {
+                    item.classList.add('hidden');
+                  }
+                });
+              });
+            });
+          }
+
+          function attachLightboxLogic() {
+            const lightbox = document.getElementById('lightbox');
+            const lightboxImg = document.getElementById('lightbox-img');
+            const lightboxCaption = document.getElementById('lightbox-caption');
+            if (!lightbox) return;
+            document.querySelectorAll('.gallery-item').forEach(item => {
+              item.addEventListener('click', () => {
+                const img = item.querySelector('img');
+                const label = item.querySelector('.g-label');
+                if (img) {
+                  lightboxImg.src = img.src;
+                  lightboxCaption.textContent = label ? label.textContent : '';
+                  lightbox.classList.add('open');
+                  document.body.style.overflow = 'hidden';
+                }
+              });
+            });
+          }
+
+          try {
+            const formData = new URLSearchParams();
+            formData.append('action', 'getGallery');
+            const res = await fetch(APPS_SCRIPT_URL, {
+              method: 'POST',
+              body: formData,
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            const json = await res.json();
+            const items = json.data || json;
+            renderGallery(Array.isArray(items) && items.length > 0 ? items : FALLBACK);
+          } catch(e) {
+            renderGallery(FALLBACK);
+          }
+        })();
+        </script>
+
+
+
+
+
+        <!-- Lightbox -->
+        <div id="lightbox" class="lightbox" role="dialog" aria-modal="true">
+            <div class="lightbox-inner">
+                <button class="lightbox-close" id="lightbox-close" aria-label="Close lightbox">âœ•</button>
+                <img id="lightbox-img" src="" alt="Gallery image enlarged">
+                <div class="lightbox-caption" id="lightbox-caption"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+        <h2 class="reveal">Your Event Could Be <span>Featured Here</span></h2>
+        <p class="reveal">Book J&amp;P Banquet and join hundreds of families who've celebrated the most important moments of
+            their lives with us.</p>
+        <a href="contact.html" class="btn btn-primary reveal"><i class="fa-regular fa-calendar-check"></i> Book Your
+            Date</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="packages.html">Packages</a></li>
+                <li><a href="gallery.html" class="active">Gallery</a></li>
+                <li><a href="blog.html">Events</a></li>
+                <li><a href="contact.html">Contact & FAQ</a></li>
+                <li><a href="contact.html" class="btn btn-primary" style="padding:0.55rem 1.4rem;">Book Now</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="packages.html">Packages</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Events</a>
             <a href="contact.html">Contact & FAQ</a>
             <a href="contact.html" class="btn btn-primary" style="margin-top:0.5rem;justify-content:center;">Book
                 Now</a>
@@ -291,11 +486,10 @@
                 </div>
                 <p>A premier banquet hall in the heart of the city, creating extraordinary events since 2005.</p>
                 <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/jnp_banquet_25?igsh=MTltOTN4ZjF5ZDhjMg%3D%3D" target="_blank"
-                        aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/jnp_banquet_hall_25" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/919665522814" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="mailto:jnpbanquet25@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="tel:+919665522814" aria-label="Call"><i class="fa-solid fa-phone"></i></a>
                 </div>
             </div>
             <div class="footer-col">
@@ -304,7 +498,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="packages.html">Packages & Pricing</a></li>
                     <li><a href="gallery.html">Photo Gallery</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="blog.html">Events</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
@@ -319,24 +513,31 @@
             </div>
             <div class="footer-col">
                 <h4>Contact</h4>
-                <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><span>12, J&amp;P Complex,
-                        Andheri West, Mumbai 400053</span></div>
-                <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span>+91 98194 86104<br>+91
-                        96655 22814</span>
-                </div>
-                <div class="footer-contact-item"><i
-                        class="fa-solid fa-envelope icon"></i><span>info@jnpbanquet.in</span></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><a href="https://share.google/rcnFDhIS4THoOPTLA" target="_blank" style="color:inherit;">Nashik, Maharashtra<br>View on Maps ↗</a></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span><a href="tel:+919665522814" style="color:inherit;">+91 96655 22814</a><br><a href="tel:+919819486104" style="color:inherit;">+91 98194 86104</a></span></div>
+                <div class="footer-contact-item"><i class="fa-brands fa-whatsapp icon"></i><a href="https://wa.me/919665522814" target="_blank" style="color:inherit;">WhatsApp Us</a></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-envelope icon"></i><a href="mailto:jnpbanquet25@gmail.com" style="color:inherit;">jnpbanquet25@gmail.com</a></div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>Â© 2024 <span>J&amp;P Banquet</span>. All rights reserved.</p>
-        
-      <a href="admin/index.html" style="font-size:.78rem;color:rgba(200,151,58,0.55);text-decoration:none;margin-top:.3rem;display:inline-block;letter-spacing:.05em;" aria-label="Admin Login"><i class=\"fa-solid fa-lock\" style=\"font-size:.65rem;margin-right:3px;\"></i>Admin Login</a>
-    </div>
+            <p>&copy; 2025 <span>J&amp;P Banquet</span>. All rights reserved.</p>
+            <a href="admin/index.html" style="font-size:.78rem;color:rgba(200,151,58,0.55);text-decoration:none;margin-top:.3rem;display:inline-block;letter-spacing:.05em;" aria-label="Admin Login">Admin Login</a>
+        </div>
     </footer>
 
     <script src="js/main.js"></script>
+
+    <!-- FLOATING ACTION BUTTONS -->
+    <div class="fab-container">
+        <a href="https://wa.me/919665522814?text=Hello%20JNP%20Banquet!" target="_blank" rel="noopener" class="fab-btn fab-whatsapp" aria-label="WhatsApp">
+            <span class="fab-icon"><i class="fa-brands fa-whatsapp"></i></span>
+            <span class="fab-label">Chat on WhatsApp</span>
+        </a>
+        <a href="tel:+919665522814" class="fab-btn fab-call" aria-label="Call">
+            <span class="fab-icon"><i class="fa-solid fa-phone"></i></span>
+            <span class="fab-label">Call: 96655 22814</span>
+        </a>
+    </div>
 </body>
 
 </html>
-

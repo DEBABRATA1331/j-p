@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -46,7 +46,7 @@
                 <li><a href="index.html">Home</a></li>
                 <li><a href="packages.html">Packages</a></li>
                 <li><a href="gallery.html">Gallery</a></li>
-                <li><a href="blog.html">Blog</a></li>
+                <li><a href="blog.html">Events</a></li>
                 <li><a href="contact.html">Contact & FAQ</a></li>
                 <li><a href="contact.html" class="btn btn-primary" style="padding:0.55rem 1.4rem;">Book Now</a></li>
             </ul>
@@ -58,7 +58,202 @@
             <a href="index.html">Home</a>
             <a href="packages.html">Packages</a>
             <a href="gallery.html">Gallery</a>
-            <a href="blog.html">Blog</a>
+            <a href="blog.html">Events</a>
+            <a href="contact.html">Contact & FAQ</a>
+            <a href="contact.html" class="btn btn-primary" style="margin-top:0.5rem;justify-content:center;">Book
+                Now</a>
+        </div>
+    </header>
+
+    <!-- PAGE HERO -->
+    <section class="page-hero">
+        <div class="decor-ring ring-1"></div>
+        <div class="decor-ring ring-2"></div>
+        <h1><span>Packages</span> & Pricing</h1>
+        <p>Choose from our carefully crafted offerings. Hover over any card to reveal what's included.</p>
+    </section>
+
+    <!-- PACKAGES -->
+    <section class="section section-cream text-center">
+        <span class="section-badge reveal">âœ¦ Our Offerings</span>
+        <h2 class="section-title reveal">Find Your Perfect <span>Package</span></h2>
+        <div class="motif-divider reveal"><span>âœ¿</span></div>
+        <p class="section-subtitle reveal" style="margin:0 auto 3rem;">All packages include complimentary parking,
+            dedicated event coordinator, air-conditioning, security, and basic housekeeping. <strong>Hover the
+                cards</strong> to see what's included.</p>
+
+        <div class="packages-grid" id="packages-grid">
+            <div class="reveal" style="grid-column:1/-1;text-align:center;padding:3rem 0;">
+                <i class="fa-solid fa-spinner fa-spin" style="color:var(--gold);font-size:2rem;"></i>
+                <p style="margin-top:1rem;color:#888;">Loading packagesâ€¦</p>
+            </div>
+        </div>
+
+    <script>
+    (async function loadPackages() {
+      const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
+      const grid = document.getElementById('packages-grid');
+
+      // Static fallback packages (shown if API fails or returns empty)
+      const FALLBACK = [
+        { id:'f1', name:'Saurabh (Basic)', price:'45,000', icon:'fa-solid fa-seedling', per:'/ event', status:'active',
+          description:'Ideal for intimate gatherings and small celebrations up to 300 guests.',
+          inclusions:['Hall rental (up to 300 guests)','Basic lighting & sound system','Tables, chairs & linen','Parking for 100 vehicles','Generator backup'],
+          exclusions:['Catering (chargeable separately)','DÃ©cor / floral','Bridal room'] },
+        { id:'f2', name:'Anand (Standard)', price:'1,10,000', icon:'fa-brands fa-pagelines', per:'/ event', status:'featured',
+          description:'Our most-loved package for weddings and receptions up to 800 guests.',
+          inclusions:['Hall rental (up to 800 guests)','Professional sound & LED lighting','Tables, chairs, linen & centrepieces','Multi-cuisine catering (veg)','Basic floral stage dÃ©cor','Bridal room (1)','Parking for 250 vehicles'],
+          exclusions:['Premium dÃ©cor & draping'] },
+        { id:'f3', name:'Maharaja (Premium)', price:'2,50,000', icon:'fa-solid fa-crown', per:'/ event', status:'active',
+          description:'An all-inclusive royal experience for landmark events up to 2,000 guests.',
+          inclusions:['Full hall (up to 2,000 guests)','Premium Bose sound & LED truss light','All linen, dÃ©cor & premium draping','Multi-cuisine catering (veg + non-veg)','Grand floral stage & mandap','2 Bridal rooms','Valet parking service','Dedicated event manager on the day'],
+          exclusions:[] }
+      ];
+
+      function renderPackages(packages) {
+        if (!packages || packages.length === 0) packages = FALLBACK;
+        grid.innerHTML = packages.map((pkg, i) => {
+          const isFeatured = pkg.status === 'featured';
+          const delay = i === 1 ? ' reveal-delay-1' : i === 2 ? ' reveal-delay-2' : '';
+          const inclusions = (pkg.inclusions || []).map(item => `<li><i class="fa-solid fa-check check"></i> ${item}</li>`).join('');
+          const exclusions = (pkg.exclusions || []).map(item => `<li><i class="fa-solid fa-xmark cross"></i> ${item}</li>`).join('');
+          return `
+          <div class="pkg-card reveal${delay}">
+            <div class="pkg-inner">
+              <div class="pkg-front${isFeatured ? ' featured' : ''}">
+                ${isFeatured ? '<div class="pkg-badge">Most Popular</div>' : ''}
+                <div class="pkg-icon"><i class="${pkg.icon || 'fa-solid fa-star'}" style="color:var(--gold);"></i></div>
+                <div class="pkg-title">${pkg.name}</div>
+                <div class="pkg-price"><span class="currency">â‚¹</span>${pkg.price} <span class="per">${pkg.per || '/ event'}</span></div>
+                <p>${pkg.description || ''}</p>
+                <div class="pkg-hint"><i class="fa-solid fa-rotate" style="color:var(--gold${isFeatured ? '-light' : ''});"></i> Hover to see inclusions</div>
+              </div>
+              <div class="pkg-back">
+                <div class="pkg-back-title">âœ¦ What's Included</div>
+                <ul class="pkg-list">${inclusions}${exclusions}</ul>
+                <a href="contact.html" class="btn btn-primary" style="text-align:center;justify-content:center;margin-top:1.2rem;">Book This Package</a>
+              </div>
+            </div>
+          </div>`;
+        }).join('');
+        // Re-observe new elements for scroll reveal
+        document.querySelectorAll('.reveal').forEach(el => revealObserver && revealObserver.observe(el));
+      }
+
+      try {
+        const formData = new URLSearchParams();
+        formData.append('action', 'getPackages');
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          body: formData,
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        const json = await res.json();
+        const packages = json.data || json;
+        renderPackages(Array.isArray(packages) && packages.length > 0 ? packages : FALLBACK);
+      } catch(e) {
+        renderPackages(FALLBACK);
+      }
+    })();
+    </script>
+
+    </section>
+
+
+    <!-- ADD-ONS -->
+    <section class="section section-light text-center">
+        <span class="section-badge reveal">âœ¦ Enhance Your Event</span>
+        <h2 class="section-title reveal">Optional <span>Add-Ons</span></h2>
+        <div class="motif-divider reveal"><span>âœ¿</span></div>
+        <p class="section-subtitle reveal" style="margin:0 auto 1rem;">Customise any package with our Ã  la carte
+            add-ons.</p>
+        <div class="addons-grid reveal">
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-camera" style="color:var(--gold);"></i></div>
+                <strong>Photography</strong>
+                <p>Professional event photography & videography packages</p>
+            </div>
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--gold);"></i></div>
+                <strong>Fireworks</strong>
+                <p>Sparklers, flower showers & phool baaris</p>
+            </div>
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-cake-candles" style="color:var(--gold);"></i></div>
+                <strong>Custom Cakes</strong>
+                <p>Personalised multi-tier celebration cakes</p>
+            </div>
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-music" style="color:var(--gold);"></i></div>
+                <strong>Live Music</strong>
+                <p>Classical, Bollywood & fusion live bands</p>
+            </div>
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-spa" style="color:var(--gold);"></i></div>
+                <strong>Mehendi Setup</strong>
+                <p>Dedicated mehendi corner with artists</p>
+            </div>
+            <div class="addon-item">
+                <div class="icon"><i class="fa-solid fa-gift" style="color:var(--gold);"></i></div>
+                <strong>Return Gifts</strong>
+                <p>Curated gift baskets for your guests</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta-banner">
+        <h2 class="reveal">Not Sure Which Package Suits You?</h2>
+        <p class="reveal">Our event specialists are happy to create a custom quote tailored to your vision and budget.
+        </p>
+        <a href="contact.html" class="btn btn-primary reveal"><i class="fa-regular fa-envelope"></i> Request a Custom
+            Quote</a>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="footer-grid">
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "J&P Banquet Hall Event Packages",
+      "description": "Wedding and event venue packages near Nashik, Maharashtra",
+      "itemListElement": [
+        {"@type":"ListItem","position":1,"name":"Saurabh Basic Package â€“ â‚¹45,000","url":"https://www.jnpbanquet.in/packages.html"},
+        {"@type":"ListItem","position":2,"name":"Anand Standard Package â€“ â‚¹1,10,000","url":"https://www.jnpbanquet.in/packages.html"},
+        {"@type":"ListItem","position":3,"name":"Maharaja Premium Package â€“ â‚¹2,50,000","url":"https://www.jnpbanquet.in/packages.html"}
+      ]
+    }
+    </script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <header>
+        <nav class="navbar" id="navbar">
+            <a href="index.html" class="nav-logo">
+                <img src="images/Banquet_logo.png" alt="J&amp;P Logo">
+                J&amp;P Banquet
+            </a>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="packages.html">Packages</a></li>
+                <li><a href="gallery.html">Gallery</a></li>
+                <li><a href="blog.html">Events</a></li>
+                <li><a href="contact.html">Contact & FAQ</a></li>
+                <li><a href="contact.html" class="btn btn-primary" style="padding:0.55rem 1.4rem;">Book Now</a></li>
+            </ul>
+            <div class="hamburger" id="hamburger">
+                <span></span><span></span><span></span>
+            </div>
+        </nav>
+        <div class="mobile-menu" id="mobile-menu">
+            <a href="index.html">Home</a>
+            <a href="packages.html">Packages</a>
+            <a href="gallery.html">Gallery</a>
+            <a href="blog.html">Events</a>
             <a href="contact.html">Contact & FAQ</a>
             <a href="contact.html" class="btn btn-primary" style="margin-top:0.5rem;justify-content:center;">Book
                 Now</a>
@@ -219,11 +414,10 @@
                 </div>
                 <p>A premier banquet hall in the heart of the city, creating extraordinary events since 2005.</p>
                 <div class="social-links">
-                    <a href="#" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/jnp_banquet_25?igsh=MTltOTN4ZjF5ZDhjMg%3D%3D" target="_blank"
-                        aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="#" aria-label="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                    <a href="https://www.instagram.com/jnp_banquet_hall_25" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://wa.me/919665522814" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+                    <a href="mailto:jnpbanquet25@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="tel:+919665522814" aria-label="Call"><i class="fa-solid fa-phone"></i></a>
                 </div>
             </div>
             <div class="footer-col">
@@ -232,7 +426,7 @@
                     <li><a href="index.html">Home</a></li>
                     <li><a href="packages.html">Packages & Pricing</a></li>
                     <li><a href="gallery.html">Photo Gallery</a></li>
-                    <li><a href="blog.html">Blog</a></li>
+                    <li><a href="blog.html">Events</a></li>
                     <li><a href="contact.html">Contact Us</a></li>
                 </ul>
             </div>
@@ -247,24 +441,31 @@
             </div>
             <div class="footer-col">
                 <h4>Contact</h4>
-                <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><span>12, J&amp;P Complex,
-                        Andheri West, Mumbai 400053</span></div>
-                <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span>+91 98194 86104<br>+91
-                        96655 22814</span>
-                </div>
-                <div class="footer-contact-item"><i
-                        class="fa-solid fa-envelope icon"></i><span>info@jnpbanquet.in</span></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><a href="https://share.google/rcnFDhIS4THoOPTLA" target="_blank" style="color:inherit;">Nashik, Maharashtra<br>View on Maps ↗</a></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span><a href="tel:+919665522814" style="color:inherit;">+91 96655 22814</a><br><a href="tel:+919819486104" style="color:inherit;">+91 98194 86104</a></span></div>
+                <div class="footer-contact-item"><i class="fa-brands fa-whatsapp icon"></i><a href="https://wa.me/919665522814" target="_blank" style="color:inherit;">WhatsApp Us</a></div>
+                <div class="footer-contact-item"><i class="fa-solid fa-envelope icon"></i><a href="mailto:jnpbanquet25@gmail.com" style="color:inherit;">jnpbanquet25@gmail.com</a></div>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>Â© 2024 <span>J&amp;P Banquet</span>. All rights reserved.</p>
-        
-      <a href="admin/index.html" style="font-size:.78rem;color:rgba(200,151,58,0.55);text-decoration:none;margin-top:.3rem;display:inline-block;letter-spacing:.05em;" aria-label="Admin Login"><i class=\"fa-solid fa-lock\" style=\"font-size:.65rem;margin-right:3px;\"></i>Admin Login</a>
-    </div>
+            <p>&copy; 2025 <span>J&amp;P Banquet</span>. All rights reserved.</p>
+            <a href="admin/index.html" style="font-size:.78rem;color:rgba(200,151,58,0.55);text-decoration:none;margin-top:.3rem;display:inline-block;letter-spacing:.05em;" aria-label="Admin Login">Admin Login</a>
+        </div>
     </footer>
 
     <script src="js/main.js"></script>
+
+    <!-- FLOATING ACTION BUTTONS -->
+    <div class="fab-container">
+        <a href="https://wa.me/919665522814?text=Hello%20JNP%20Banquet!" target="_blank" rel="noopener" class="fab-btn fab-whatsapp" aria-label="WhatsApp">
+            <span class="fab-icon"><i class="fa-brands fa-whatsapp"></i></span>
+            <span class="fab-label">Chat on WhatsApp</span>
+        </a>
+        <a href="tel:+919665522814" class="fab-btn fab-call" aria-label="Call">
+            <span class="fab-icon"><i class="fa-solid fa-phone"></i></span>
+            <span class="fab-label">Call: 96655 22814</span>
+        </a>
+    </div>
 </body>
 
 </html>
-

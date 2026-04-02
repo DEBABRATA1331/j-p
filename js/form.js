@@ -19,13 +19,10 @@ if (form) {
             valid = false;
         }
 
-        // Validate email
+        // Validate email (optional but must be valid if provided)
         const email = document.getElementById('email');
         const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!email.value.trim()) {
-            showError(email, 'Please enter your email address.');
-            valid = false;
-        } else if (!emailRe.test(email.value.trim())) {
+        if (email.value.trim() && !emailRe.test(email.value.trim())) {
             showError(email, 'Please enter a valid email address.');
             valid = false;
         }
@@ -48,12 +45,9 @@ if (form) {
             valid = false;
         }
 
-        // Validate date
+        // Validate date (optional but must be future if provided)
         const eventDate = document.getElementById('event-date');
-        if (!eventDate.value) {
-            showError(eventDate, 'Please select your event date.');
-            valid = false;
-        } else {
+        if (eventDate.value) {
             const selected = new Date(eventDate.value);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
@@ -63,10 +57,10 @@ if (form) {
             }
         }
 
-        // Validate guests
+        // Validate guests (optional)
         const guests = document.getElementById('guests');
-        if (!guests.value || guests.value < 1) {
-            showError(guests, 'Please enter expected guest count.');
+        if (guests.value && guests.value < 1) {
+            showError(guests, 'Please enter a valid guest count.');
             valid = false;
         }
 
