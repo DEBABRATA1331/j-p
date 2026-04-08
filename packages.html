@@ -137,13 +137,13 @@
                 <p>${pkg.description || ''}</p>
                 <div class="pkg-hint"><i class="fa-solid fa-rotate" style="color:var(--gold${isFeatured ? '-light' : ''});"></i> Hover to see inclusions</div>
               </div>
-              <div class="pkg-back" style="background:${theme.bg};border:1px solid ${theme.accent}33;">
+              <div class="pkg-back" style="background:${theme.bg};border:1px solid ${theme.accent}33;align-items:center;">
                 <div style="text-align:center;margin-bottom:1rem;">
-                  <img src="images/Banquet_logo.png" alt="J&P Banquet" style="height:44px;width:auto;filter:drop-shadow(0 0 8px ${theme.accent});opacity:0.9;">
+                  <img src="images/Banquet_logo.png" alt="J&P Banquet" style="height:44px;width:auto;display:block;margin:0 auto;filter:drop-shadow(0 0 8px ${theme.accent});opacity:0.9;">
                 </div>
                 <div class="pkg-back-title" style="color:${theme.accent};text-shadow:0 0 12px ${theme.glow};letter-spacing:0.08em;">&#10022; What's Included</div>
                 <div style="width:50px;height:2px;background:linear-gradient(90deg,transparent,${theme.accent},transparent);margin:0.5rem auto 1rem;"></div>
-                <ul class="pkg-list" style="text-align:left;">${inclusions}${exclusions}</ul>
+                <ul class="pkg-list">${inclusions}${exclusions}</ul>
                 <div style="text-align:center;margin-top:auto;padding-top:0.8rem;font-size:0.75rem;color:${theme.accent};opacity:0.7;letter-spacing:0.1em;">${theme.stars} J&P BANQUET ${theme.stars}</div>
                 <a href="contact.html" class="btn btn-primary" style="text-align:center;justify-content:center;margin-top:0.8rem;background:${theme.accent};border-color:${theme.accent};">Book This Package</a>
               </div>

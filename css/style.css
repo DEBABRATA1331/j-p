@@ -972,7 +972,9 @@ ul {
   box-shadow: var(--shadow-deep);
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: space-between;
+  text-align: center;
 }
 
 .pkg-front.featured {
@@ -1080,13 +1082,13 @@ ul {
 }
 
 .pkg-list {
-  display: flex;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.5rem 0.8rem;
   overflow-y: auto;
   max-height: 260px;
   flex: 1;
+  width: 100%;
 }
 
 .pkg-list li {
