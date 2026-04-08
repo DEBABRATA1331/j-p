@@ -1096,11 +1096,9 @@ ul {
   align-items: flex-start;
   gap: 7px;
   color: rgba(255, 255, 255, 0.85);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   line-height: 1.4;
-  padding: 0.3rem 0.4rem;
-  border-radius: 6px;
-  background: rgba(255,255,255,0.03);
+  padding: 0.2rem 0.3rem;
 }
 
 .pkg-list li .check {
