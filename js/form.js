@@ -1,8 +1,61 @@
-/* JNP Banquet – Inquiry Form Validation */
+/* JNP Banquet – Inquiry Form Validation & Submission */
 
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
+
+/* ── Dynamic Package Loader ──────────────────────────────── */
+(async function loadPackageOptions() {
+    const select = document.getElementById('package');
+    if (!select) return;
+
+    const FALLBACK = [
+        { value: '', label: 'Not sure yet' },
+        { value: 'Custom / Need a Quote', label: 'Custom / Need a Quote' },
+    ];
+
+    function applyOptions(opts) {
+        select.innerHTML = opts.map(o =>
+            `<option value="${o.value}">${o.label}</option>`
+        ).join('');
+    }
+
+    // Show loading state
+    select.innerHTML = '<option value="">Loading packages…</option>';
+    select.disabled = true;
+
+    try {
+        const fd = new URLSearchParams();
+        fd.append('action', 'getPackages');
+        const res = await fetch(APPS_SCRIPT_URL, {
+            method: 'POST',
+            body: fd,
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        });
+        const json = await res.json();
+        const packages = (json.data || json);
+
+        if (Array.isArray(packages) && packages.length > 0) {
+            const active = packages.filter(p => p.status !== 'inactive');
+            const opts = [{ value: '', label: 'Not sure yet' }];
+            active.forEach(p => {
+                opts.push({
+                    value: `${p.name} – ₹${p.price}`,
+                    label: `${p.name} – ₹${p.price} ${p.per || '/ event'}`
+                });
+            });
+            opts.push({ value: 'Custom / Need a Quote', label: 'Custom / Need a Quote' });
+            applyOptions(opts);
+        } else {
+            applyOptions(FALLBACK);
+        }
+    } catch (e) {
+        applyOptions(FALLBACK);
+    } finally {
+        select.disabled = false;
+    }
+})();
+
+/* ── Form Validation & Submission ────────────────────────── */
 const form = document.getElementById('inquiry-form');
-const formCard = document.querySelector('.form-card');
-const formSuccess = document.querySelector('.form-success');
 
 if (form) {
     form.addEventListener('submit', async function (e) {
@@ -37,7 +90,7 @@ if (form) {
             valid = false;
         }
 
-        // Validate date (optional but must be future if provided)
+        // Validate date (optional – must be future if provided)
         const eventDate = document.getElementById('event-date');
         if (eventDate.value) {
             const selected = new Date(eventDate.value);
@@ -51,41 +104,59 @@ if (form) {
 
         // Validate guests (optional)
         const guests = document.getElementById('guests');
-        if (guests.value && guests.value < 1) {
+        if (guests && guests.value && parseInt(guests.value) < 1) {
             showError(guests, 'Please enter a valid guest count.');
             valid = false;
         }
 
-        if (valid) {
-            const btn = form.querySelector('button[type="submit"]');
-            const origText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
-            btn.disabled = true;
+        if (!valid) return;
 
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
-            const payload = {
-                name      : document.getElementById('name').value.trim(),
-                phone     : document.getElementById('phone').value.trim(),
-                eventType : document.getElementById('event-type').value,
-                eventDate : document.getElementById('event-date').value,
-                message   : document.getElementById('message').value.trim()
-            };
-            const formData = new URLSearchParams();
-            formData.append('action', 'addContact');
-            formData.append('data', JSON.stringify(payload));
+        // ── Submit ─────────────────────────────────────────
+        const btn = form.querySelector('button[type="submit"]');
+        const origHTML = btn.innerHTML;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sending…';
+        btn.disabled = true;
 
-            try {
-                await fetch(APPS_SCRIPT_URL, {
-                    method : 'POST',
-                    body   : formData,
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-                });
-            } catch(err) { /* silently proceed – don't block success UX */ }
+        const payload = {
+            name      : name.value.trim(),
+            phone     : phone.value.trim(),
+            eventType : eventType.value,
+            eventDate : eventDate.value,
+            guestCount: guests ? guests.value : '',
+            package   : (document.getElementById('package') || {}).value || '',
+            message   : (document.getElementById('message') || {}).value.trim()
+        };
 
-            form.style.display = 'none';
-            document.getElementById('form-success').style.display = 'block';
+        const formData = new URLSearchParams();
+        formData.append('action', 'addContact');
+        formData.append('data', JSON.stringify(payload));
+
+        try {
+            const res = await fetch(APPS_SCRIPT_URL, {
+                method : 'POST',
+                body   : formData,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            });
+            const json = await res.json();
+
+            if (json.status === 'error') {
+                throw new Error(json.error || 'Server error. Please try again.');
+            }
+
+            // Success – hide form-body, show success state
+            document.getElementById('form-body').style.display = 'none';
+            const successEl = document.getElementById('form-success');
+            if (successEl) {
+                successEl.style.display = 'block';
+                successEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+
+        } catch (err) {
+            // Re-enable button and show inline error
+            btn.innerHTML = origHTML;
+            btn.disabled = false;
+            showSubmitError(err.message || 'Failed to send. Please try WhatsApp instead.');
         }
-
     });
 
     // Live validation: clear error on input
@@ -93,10 +164,13 @@ if (form) {
         field.addEventListener('input', () => {
             const group = field.closest('.form-group');
             if (group) group.classList.remove('error');
+            const errBox = form.querySelector('.submit-error-msg');
+            if (errBox) errBox.remove();
         });
     });
 }
 
+/* ── Helpers ─────────────────────────────────────────────── */
 function showError(field, message) {
     const group = field.closest('.form-group');
     if (!group) return;
@@ -108,4 +182,15 @@ function showError(field, message) {
         group.appendChild(msg);
     }
     msg.textContent = message;
+}
+
+function showSubmitError(message) {
+    let errBox = form.querySelector('.submit-error-msg');
+    if (!errBox) {
+        errBox = document.createElement('div');
+        errBox.className = 'submit-error-msg';
+        errBox.style.cssText = 'background:rgba(220,53,69,0.1);border:1px solid rgba(220,53,69,0.4);color:#ff6b6b;padding:0.8rem 1rem;border-radius:8px;font-size:0.9rem;margin-top:0.8rem;text-align:center;';
+        form.appendChild(errBox);
+    }
+    errBox.innerHTML = `<i class="fa-solid fa-circle-exclamation"></i> ${message}`;
 }
