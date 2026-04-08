@@ -19,14 +19,6 @@ if (form) {
             valid = false;
         }
 
-        // Validate email (optional but must be valid if provided)
-        const email = document.getElementById('email');
-        const emailRe = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email.value.trim() && !emailRe.test(email.value.trim())) {
-            showError(email, 'Please enter a valid email address.');
-            valid = false;
-        }
-
         // Validate phone
         const phone = document.getElementById('phone');
         const phoneRe = /^[0-9+\-\s]{8,15}$/;
@@ -73,7 +65,6 @@ if (form) {
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysGcuUK2vWqWXuDJaI0jCndqNeZghnnP7SRcOgx-a2VmVFtIrkGIoaYY5qrwD0zR1URw/exec';
             const payload = {
                 name      : document.getElementById('name').value.trim(),
-                email     : document.getElementById('email').value.trim(),
                 phone     : document.getElementById('phone').value.trim(),
                 eventType : document.getElementById('event-type').value,
                 eventDate : document.getElementById('event-date').value,

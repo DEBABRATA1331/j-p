@@ -110,9 +110,18 @@
 
       function renderPackages(packages) {
         if (!packages || packages.length === 0) packages = FALLBACK;
+
+        // Themed gradients & accent colors for each package
+        const THEMES = [
+          { bg: 'linear-gradient(145deg, #1a1200, #3d2a00)', accent: '#C8973A', glow: 'rgba(200,151,58,0.18)', stars: '✦', badge: 'Essentials' },
+          { bg: 'linear-gradient(145deg, #0a1f12, #1a4028)', accent: '#4CAF72', glow: 'rgba(76,175,114,0.18)', stars: '✦ ✦', badge: 'Most Popular' },
+          { bg: 'linear-gradient(145deg, #1a0a00, #4a1500)', accent: '#E8843C', glow: 'rgba(232,132,60,0.18)', stars: '✦ ✦ ✦', badge: 'Royal' },
+        ];
+
         grid.innerHTML = packages.map((pkg, i) => {
           const isFeatured = pkg.status === 'featured';
           const delay = i === 1 ? ' reveal-delay-1' : i === 2 ? ' reveal-delay-2' : '';
+          const theme = THEMES[i % THEMES.length];
           const inclusions = (pkg.inclusions || []).map(item => `<li><i class="fa-solid fa-check check"></i> ${item}</li>`).join('');
           const exclusions = (pkg.exclusions || []).map(item => `<li><i class="fa-solid fa-xmark cross"></i> ${item}</li>`).join('');
           return `
@@ -120,16 +129,23 @@
             <div class="pkg-inner">
               <div class="pkg-front${isFeatured ? ' featured' : ''}">
                 ${isFeatured ? '<div class="pkg-badge">Most Popular</div>' : ''}
-                <div class="pkg-icon"><i class="${pkg.icon || 'fa-solid fa-star'}" style="color:var(--gold);"></i></div>
+                <div class="pkg-icon" style="background:transparent;padding:0;">
+                  <img src="images/Banquet_logo.png" alt="J&P Banquet Logo" style="height:70px;width:auto;object-fit:contain;filter:drop-shadow(0 2px 8px rgba(200,151,58,0.4));">
+                </div>
                 <div class="pkg-title">${pkg.name}</div>
                 <div class="pkg-price"><span class="currency">&#8377;</span>${pkg.price} <span class="per">${pkg.per || '/ event'}</span></div>
                 <p>${pkg.description || ''}</p>
                 <div class="pkg-hint"><i class="fa-solid fa-rotate" style="color:var(--gold${isFeatured ? '-light' : ''});"></i> Hover to see inclusions</div>
               </div>
-              <div class="pkg-back">
-                <div class="pkg-back-title">&#10022; What's Included</div>
-                <ul class="pkg-list">${inclusions}${exclusions}</ul>
-                <a href="contact.html" class="btn btn-primary" style="text-align:center;justify-content:center;margin-top:1.2rem;">Book This Package</a>
+              <div class="pkg-back" style="background:${theme.bg};border:1px solid ${theme.accent}33;">
+                <div style="text-align:center;margin-bottom:1rem;">
+                  <img src="images/Banquet_logo.png" alt="J&P Banquet" style="height:44px;width:auto;filter:drop-shadow(0 0 8px ${theme.accent});opacity:0.9;">
+                </div>
+                <div class="pkg-back-title" style="color:${theme.accent};text-shadow:0 0 12px ${theme.glow};letter-spacing:0.08em;">&#10022; What's Included</div>
+                <div style="width:50px;height:2px;background:linear-gradient(90deg,transparent,${theme.accent},transparent);margin:0.5rem auto 1rem;"></div>
+                <ul class="pkg-list" style="text-align:left;">${inclusions}${exclusions}</ul>
+                <div style="text-align:center;margin-top:auto;padding-top:0.8rem;font-size:0.75rem;color:${theme.accent};opacity:0.7;letter-spacing:0.1em;">${theme.stars} J&P BANQUET ${theme.stars}</div>
+                <a href="contact.html" class="btn btn-primary" style="text-align:center;justify-content:center;margin-top:0.8rem;background:${theme.accent};border-color:${theme.accent};">Book This Package</a>
               </div>
             </div>
           </div>`;
@@ -212,9 +228,8 @@
                 </div>
                 <p>A premier banquet hall at Naigaon East, Vasai-Virar, creating extraordinary events since 2005.</p>
                 <div class="social-links">
-                    <a href="https://www.instagram.com/jnp_banquet_hall_25" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/jnp_banquet_25?igsh=MTltOTN4ZjF5ZDhjMg==" target="_blank" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
                     <a href="https://wa.me/919665522814" target="_blank" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
-                    <a href="mailto:jnpbanquet25@gmail.com" aria-label="Email"><i class="fa-solid fa-envelope"></i></a>
                     <a href="tel:+919665522814" aria-label="Call"><i class="fa-solid fa-phone"></i></a>
                 </div>
             </div>
@@ -244,7 +259,6 @@
                 <div class="footer-contact-item"><i class="fa-solid fa-location-dot icon"></i><a href="https://share.google/rcnFDhIS4THoOPTLA" target="_blank" style="color:inherit;">Don Bosco Rd, Naigaon East<br>Vasai-Virar, Mumbai 401208 &#8599;</a></div>
                 <div class="footer-contact-item"><i class="fa-solid fa-phone icon"></i><span><a href="tel:+919665522814" style="color:inherit;">+91 96655 22814</a><br><a href="tel:+919819486104" style="color:inherit;">+91 98194 86104</a></span></div>
                 <div class="footer-contact-item"><i class="fa-brands fa-whatsapp icon"></i><a href="https://wa.me/919665522814" target="_blank" style="color:inherit;">WhatsApp Us</a></div>
-                <div class="footer-contact-item"><i class="fa-solid fa-envelope icon"></i><a href="mailto:jnpbanquet25@gmail.com" style="color:inherit;">jnpbanquet25@gmail.com</a></div>
             </div>
         </div>
         <div class="footer-bottom">
